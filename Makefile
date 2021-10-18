@@ -1,25 +1,27 @@
-.PHONY		= all clean fclean re bonus
+.PHONY		=	all clean fclean re bonus
 
-NAME		= philo
+NAME		=	philo
 
-CC			= gcc
+CC			=	gcc
 
-CFLAGS		= -Wall -Wextra -Werror
+CFLAGS		=	-Wall -Wextra -Werror
 
-RM			= /bin/rm -f
+RM			=	/bin/rm -f
 
-INC			= philo.h
+INC			= 	philo.h
 
-OBJ_DIR		= obj
+OBJ_DIR		=	obj
 
-SRCS		= philo.c
+SRCS		=	philo.c \
+				check.c \
+				utils.c
 
-OBJS		= $(addprefix $(OBJ_DIR)/,$(SRCS:.c=.o))
+OBJS		=	$(addprefix $(OBJ_DIR)/,$(SRCS:.c=.o))
 
 all: 			$(NAME)
 
 $(NAME): 		$(OBJS)
-				$(CC) -o $(NAME) $(OBJS)
+				$(CC) -o $(NAME) $(OBJS) -pthread
 
 $(OBJ_DIR)/%.o:	%.c
 				@mkdir -p $(OBJ_DIR)
