@@ -12,66 +12,68 @@
 
 #include "philo.h"
 
-int		check_nb_philos(const char *av, t_arg *arg)
+int		check_nb_philos(const char *av, t_info *info)
 {
-	arg->nb_of_philos = ft_atoi(av);
-	if (arg->nb_of_philos == -1)
+	info->nb_of_philos = ft_atoi(av);
+	if (info->nb_of_philos == -1)
 		return (-1);
-	if (arg->nb_of_philos < 1)
+	if (info->nb_of_philos < 1)
 		return (-1);
 	return (0);
 }
 
-int		check_time_to_die(const char *av, t_arg *arg)
+int		check_time_to_die(const char *av, t_info *info)
 {
-	arg->time_to_die = ft_atoi(av);
-	if (arg->time_to_die == -1)
+	info->time_to_die = ft_atoi(av);
+	if (info->time_to_die == -1)
 		return (-1);
-	if (arg->time_to_die < 1)
+	if (info->time_to_die < 1)
 		return (-1);
 	return (0);
 }
 
-int		check_time_to_eat(const char *av, t_arg *arg)
+int		check_time_to_eat(const char *av, t_info *info)
 {
-	arg->time_to_eat = ft_atoi(av);
-	if (arg->time_to_eat == -1)
+	info->time_to_eat = ft_atoi(av);
+	if (info->time_to_eat == -1)
 		return (-1);
-	if (arg->time_to_eat < 1)
+	if (info->time_to_eat < 1)
 		return (-1);
 	return (0);
 }
 
-int		check_time_to_sleep(const char *av, t_arg *arg)
+int		check_time_to_sleep(const char *av, t_info *info)
 {
-	arg->time_to_sleep = ft_atoi(av);
-	if (arg->time_to_sleep == -1)
+	info->time_to_sleep = ft_atoi(av);
+	if (info->time_to_sleep == -1)
 		return (-1);
-	if (arg->time_to_sleep < 1)
+	if (info->time_to_sleep < 1)
 		return (-1);
 	return (0);
 }
 
-int		check_args(int ac, char *av[], t_arg *arg)
+int		check_args(int ac, char *av[], t_info *info)
 {
 	if (ac != 5 && ac != 6)
 		return (-1);
-	if (check_nb_philos(av[1], arg) == -1)
+	if (check_nb_philos(av[1], info) == -1)
 		return (-1);
-	if (check_time_to_die(av[2], arg) == -1)
+	if (check_time_to_die(av[2], info) == -1)
 		return (-1);
-	if (check_time_to_eat(av[3], arg) == -1)
+	if (check_time_to_eat(av[3], info) == -1)
 		return (-1);
-	if (check_time_to_sleep(av[4], arg) == -1)
+	if (check_time_to_sleep(av[4], info) == -1)
 		return (-1);
 	if (av[5])
 	{
-		arg->lunch_time = ft_atoi(av[5]);
-		if (arg->lunch_time == -1)
+		info->lunch_time = ft_atoi(av[5]);
+		if (info->lunch_time == -1)
 			return (-1);
-		if (arg->lunch_time < 1)
+		if (info->lunch_time < 1)
 			return (-1);
 		return (0);
 	}
+	else
+		info->lunch_time = 0;
 	return (0);
 }

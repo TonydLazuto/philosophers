@@ -19,19 +19,13 @@ int	ft_isdigit(int c)
 	return (0);
 }
 
-static const char	*skip_space(const char *str)
-{
-	while (*str == '\t' || *str == ' ' || *str == '0')
-		str++;
-	return (str);
-}
-
 int	ft_atoi(const char *str)
 {
 	long long	nb;
 
 	nb = 0;
-	str = skip_space(str);
+	while (*str == '\t' || *str == ' ' || *str == '0')
+		str++;
 	while (*str)
 	{
 		if (!ft_isdigit(*str))
@@ -40,4 +34,62 @@ int	ft_atoi(const char *str)
 		str++;
 	}
 	return ((int)nb);
+}
+/**
+ * -----------------------------------------------
+ */
+int		init(t_thread **th, t_info info)
+{
+	t_thread	*last;
+	int			i;
+
+	i = 0;
+	while (i < info.nb_of_philos)
+	{
+		*th = push_back(*th, &info);
+		if (!*th)
+			return (-1);
+		last = last_thread(*th);
+		pthread_mutex_init(&last->fork, NULL);
+		i++;
+	}
+	return (0);
+}
+
+
+int		destroy_mutex(t_thread *th)
+{
+	int i;
+
+	i = 0;
+	while (i < th->info->nb_of_philos)
+	{
+		if (pthread_mutex_destroy(&th->fork))
+			return (-1);
+		i++;
+	}
+	return (0);
+}
+
+/**
+ * -----------------------------------------------
+ */
+long    get_time(void)
+{
+	struct timeval	tp;
+	long			milliseconds;
+
+	gettimeofday(&tp, NULL);
+	milliseconds = tp.tv_sec * 1000;
+	milliseconds += tp.tv_usec / 1000;
+	return (milliseconds);
+}
+
+void		ft_usleep(size_t time)
+{
+	size_t	start;
+
+	start = get_time();
+	while (get_time() - start < time)
+		usleep(100);
 }

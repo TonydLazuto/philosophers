@@ -24,34 +24,33 @@
 #include <errno.h>
 #include <ctype.h>
 
-enum e_action
-{
-	EATING = 0,
-	SLEEPING = 1,
-	THINKING = 2
-};
-
-typedef struct s_arg
+typedef struct s_info
 {
 	int		nb_of_philos;
 	int		time_to_die;
 	int		time_to_eat;
 	int		time_to_sleep;
 	int		lunch_time;
-}				t_arg;
+}				t_info;
 
 typedef struct s_thread
 {
-	pthread_t		*th_id;
+	pthread_t		pth;
+	pthread_mutex_t	fork;
 	char			*buf;
-	int				num_thread;
-	int				nb_philos_eating;
-	int				nb_philos_thinking;
-	int				nb_philos_sleeping;
+	t_info			*info;
+	struct s_thread	*left;
+	struct s_thread	*right;
 }				t_thread;
 
-int		ft_atoi(const char *str);
-int		ft_isdigit(int c);
-int		check_args(int ac, char *av[], t_arg *arg);
+int			ft_atoi(const char *str);
+int			ft_isdigit(int c);
+int			check_args(int ac, char *av[], t_info *info);
+int			init(t_thread **pth, t_info info);
+int			destroy_mutex(t_thread *pth);
+long    	get_time(void);
+void		ft_usleep(size_t time);
+t_thread	*push_back(t_thread *list, t_info *info);
+t_thread	*last_thread(t_thread *elet);
 
 # endif

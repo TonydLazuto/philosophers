@@ -28,7 +28,7 @@ void	*thinking(void *pth)
 	printf("timestamp_in_ms X is thinking");
 }
 
-void	*dying(void *pth)
+void	dying(void *pth)
 {
 	printf("timestamp_in_ms X is died");
 }

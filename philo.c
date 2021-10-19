@@ -12,71 +12,83 @@
 
 #include "philo.h"
 
-//wait(chopstick[i])
-//wait(chopstick[(i+1) % 5])
+/*
+	wait(chopstick[i])
+	wait(chopstick[(i+1) % 5])
+*/
 
-long    get_time(void)
+void	*routine(void *th)
 {
-	struct timeval	tp;
-	long			milliseconds;
+	t_thread	*cpy;
+	long		start_time;
 
-	gettimeofday(&tp, NULL);
-	milliseconds = tp.tv_sec * 1000;
-	milliseconds += tp.tv_usec / 1000;
-	return (milliseconds);
+	start_time = get_time();
+	cpy = (t_thread*)th;
+	if (cpy->info->nb_of_philos >= 2)
+	{
+		if (pthread_mutex_lock(&cpy->fork))
+			return (NULL);
+		printf("%ldms: %ld has taken a fork", get_time() - start_time, cpy->pth);
+	/*	if (pthread_mutex_lock(&cpy->right->fork)) // if (cpy right exist) else (c'est le 1er)
+			return (NULL);
+		printf("%ldms: %d has taken a fork", get_time() - start_time, cpy->pth);
+		printf("%ldms: %d is eating", get_time() - start_time, cpy->pth);
+		usleep(cpy->time_to_eat * 1000);
+		if (pthread_mutex_unlock(&cpy->right->fork))
+			return (NULL);	
+	*/
+		if (pthread_mutex_unlock(&cpy->fork))
+			return (NULL);
+		else
+			printf("pthread %ld cannot lock fork\n", cpy->pth);
+	}
+/*
+	if (get_time() - start_time >= cpy->time_to_die)
+		pthread_detach(cpy->id[cpy->num]);
+	if (cpy->nb_of_philos == 1)
+		;//dying
+*/	
+	return ((void*)cpy);
 }
 
-void	*eating(void *pth)
+int		do_some(t_thread *th)
 {
-	pthread_t *my_pth;
+	t_thread *cpy;
 
-	my_pth = (pthread_t*)pth;
-	printf("timestamp_in_ms X has taken a fork");
-	printf("timestamp_in_ms X is eating");
-}
-
-int		philos_init(t_thread *pth, t_arg arg)
-{
-	int	i;
-
-	i = 0;
-	while (i < arg.nb_of_philos)
+	cpy = th;
+	while (cpy)
 	{
-		pth->num_thread = i;
-		if (pthread_create(&pth->th_id[i], NULL, &eating, (void*)pth) != 0)
+		if (pthread_create(&cpy->pth, NULL, &routine, (void*)cpy))
 			return (-1);
-		i++;
+		cpy = cpy->right;
 	}
-	i = 0;
-	while (i < arg.nb_of_philos)
+	cpy = th;
+	while (cpy)
 	{
-		if (pthread_join(pth->th_id[i], (void**)pth))
+		if (pthread_join(cpy->pth, (void**)cpy))
 			return (-1);
-		i++;
+		cpy = cpy->right;
 	}
+	return (0);
 }
 
 int main(int ac, char *av[])
 {
-	t_arg		arg;
-	t_thread	pth;
-	long		start_time;
-		
-	// Remember when we started
-	start_time = get_time();
-	if (check_args(ac, av, &arg) == -1)
+	t_thread	*th;
+	t_info		info;
+
+	th = NULL;
+	if (check_args(ac, av, &info) == -1)
 		return (-1);
-	pth.th_id = (pthread_t*)malloc(sizeof(pthread_t) * arg.nb_of_philos);
-	if (!pth.th_id)
-		return (-1);
-	if (philos_init(&pth, arg) == -1)
+	if (init(&th, info) == -1)
 		return (-1);
 	while (1)
     {
-		// Print time from start, in ms
-        printf("%ld\n", get_time() - start_time);
-		// Sleep 200 times 1000 microseconds (1 millisecond)
-        usleep(200 * 1000);
+		if (do_some(th) == -1)
+			return (-1);
+		ft_usleep(100);
     }
+	if (destroy_mutex(th) == -1)
+		return (-1);
 	return (0);
 }
