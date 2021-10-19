@@ -35,10 +35,12 @@ typedef struct s_info
 
 typedef struct s_thread
 {
+	t_info			*info;
 	pthread_t		pth;
 	pthread_mutex_t	fork;
+	long			last_meal;
+	int				num;
 	char			*buf;
-	t_info			*info;
 	struct s_thread	*left;
 	struct s_thread	*right;
 }				t_thread;
@@ -50,7 +52,7 @@ int			init(t_thread **pth, t_info info);
 int			destroy_mutex(t_thread *pth);
 long    	get_time(void);
 void		ft_usleep(size_t time);
-t_thread	*push_back(t_thread *list, t_info *info);
+t_thread	*push_back(t_thread *list, t_info *info, int num);
 t_thread	*last_thread(t_thread *elet);
 
 # endif

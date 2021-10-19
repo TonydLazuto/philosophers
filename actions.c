@@ -12,23 +12,30 @@
 
 #include "philo.h"
 
-void	*eating(void *pth)
+void	*try_to_eat(t_thread *th, int start_time)
 {
 	printf("timestamp_in_ms X has taken a fork");
 	printf("timestamp_in_ms X is eating");
+	while ((get_time() - start_time) - start_time <= th->info->time_to_eat)
+		;
+	th->last_meal = get_time() - start_time;
 }
 
-void	*sleeping(void *pth)
+void	*sleeping(t_thread *th, int start_time)
 {
 	printf("timestamp_in_ms X is sleeping");
+	while ((get_time() - start_time) - start_time <= th->info->time_to_sleep)
+		;
 }
 
-void	*thinking(void *pth)
+void	*thinking(t_thread *th, int start_time)
 {
 	printf("timestamp_in_ms X is thinking");
 }
 
-void	dying(void *pth)
+void	*dying(t_thread *th, int start_time)
 {
-	printf("timestamp_in_ms X is died");
+	printf("timestamp_in_ms X died");
+	while ((get_time() - start_time) - start_time <= th->info->time_to_die)
+		;
 }

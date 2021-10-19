@@ -46,7 +46,7 @@ int		init(t_thread **th, t_info info)
 	i = 0;
 	while (i < info.nb_of_philos)
 	{
-		*th = push_back(*th, &info);
+		*th = push_back(*th, &info, i + 1);
 		if (!*th)
 			return (-1);
 		last = last_thread(*th);

@@ -12,15 +12,16 @@
 
 #include "philo.h"
 
-t_thread	*new_nb(t_info *info)
+t_thread	*new_nb(t_info *info, int num)
 {
 	t_thread	*elet;
 
 	elet = (t_thread *)malloc(sizeof(*elet));
 	if (!elet)
 		return (NULL);
-	elet->buf = NULL;
 	elet->info = info;
+	elet->num = num;
+	elet->buf = NULL;
 	elet->right = NULL;
 	elet->left = NULL;
 	return (elet);
@@ -35,12 +36,12 @@ t_thread	*last_thread(t_thread *elet)
 	return (elet);
 }
 
-t_thread	*push_back(t_thread *list, t_info *info)
+t_thread	*push_back(t_thread *list, t_info *info, int num)
 {
 	t_thread	*elet;
 	t_thread	*tmp;
 
-	elet = new_nb(info);
+	elet = new_nb(info, num);
 	tmp = list;
 	if (!elet)
 		return (NULL);
