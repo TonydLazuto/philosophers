@@ -37,7 +37,8 @@ typedef struct s_thread
 {
 	t_info			*info;
 	pthread_t		pth;
-	pthread_mutex_t	fork;
+	pthread_mutex_t	r_fork;
+	int				has_eaten;
 	long			last_meal;
 	int				num;
 	char			*buf;

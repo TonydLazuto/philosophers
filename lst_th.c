@@ -21,6 +21,7 @@ t_thread	*new_nb(t_info *info, int num)
 		return (NULL);
 	elet->info = info;
 	elet->num = num;
+	elet->has_eaten = 0;
 	elet->buf = NULL;
 	elet->right = NULL;
 	elet->left = NULL;

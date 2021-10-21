@@ -50,7 +50,7 @@ int		init(t_thread **th, t_info info)
 		if (!*th)
 			return (-1);
 		last = last_thread(*th);
-		pthread_mutex_init(&last->fork, NULL);
+		pthread_mutex_init(&last->r_fork, NULL);
 		i++;
 	}
 	return (0);
@@ -64,7 +64,7 @@ int		destroy_mutex(t_thread *th)
 	i = 0;
 	while (i < th->info->nb_of_philos)
 	{
-		if (pthread_mutex_destroy(&th->fork))
+		if (pthread_mutex_destroy(&th->r_fork))
 			return (-1);
 		i++;
 	}

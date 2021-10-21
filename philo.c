@@ -17,37 +17,58 @@
 	wait(chopstick[(i+1) % 5])
 */
 
-
-void	*eating(t_thread *th, int start_time)
+void	sleeping(t_thread *th, int start_time)
 {
-	printf("timestamp_in_ms X has taken a fork");
-	printf("timestamp_in_ms X is eating");
-	while ((get_time() - start_time) - start_time <= th->info->time_to_eat)
-		;
 	start_time = get_time();
-	th = sleeping(th, start_time);
+	printf("%ldms %d is sleeping", get_time() - start_time, th->num);
+	ft_usleep(th->info->time_to_sleep * 1000);
+}
+
+void	thinking(t_thread *th, int start_time)
+{
 	start_time = get_time();
-	th = thinking(th, start_time);
+	printf("%ldms %d is thinking", get_time() - start_time, th->num);
+}
+
+void	dying(t_thread *th, int start_time)
+{
+	th->has_eaten = 0;
+	start_time = get_time();
+	ft_usleep(th->info->time_to_die * 1000);
+	printf("%ldms %d died", get_time() - start_time, th->num);
+	pthread_detach(th);
+}
+
+int		lock_l_fork(t_thread *th, int start_time, pthread_mutex_t l_fork)
+{
+	if (pthread_mutex_lock(&l_fork))
+		return (-1);
+	printf("%ldms %d has taken a l_fork", get_time() - start_time, th->num);
+	printf("%ldms %d is eating", get_time() - start_time, th->num);
 	th->last_meal = get_time() - start_time;
+	ft_usleep(th->info->time_to_eat * 1000);
+	th->has_eaten = 1;
+	if (pthread_mutex_unlock(&l_fork))
+		pthread_mutex_unlock(&th->r_fork);
+	return (0);
 }
 
-void	*sleeping(t_thread *th, int start_time)
+int		lock_r_fork(t_thread *th, int start_time)
 {
-	printf("timestamp_in_ms X is sleeping");
-	while ((get_time() - start_time) - start_time <= th->info->time_to_sleep)
-		;
-}
-
-void	*thinking(t_thread *th, int start_time)
-{
-	printf("timestamp_in_ms X is thinking");
-}
-
-void	*dying(t_thread *th, int start_time)
-{
-	printf("timestamp_in_ms X died");
-	while ((get_time() - start_time) - start_time <= th->info->time_to_die)
-		;
+	if (pthread_mutex_lock(&th->r_fork))
+		return (-1);
+	printf("%ldms: %d has taken a r_fork", get_time() - start_time, th->num);
+	if (th->left)
+	{
+		if (lock_l_fork(th, start_time, th->left->r_fork) == -1)
+			pthread_mutex_unlock(&th->r_fork);
+	}
+	else
+	{
+		if (lock_l_fork(th, start_time, last_thread(th)->r_fork) == -1)
+			pthread_mutex_unlock(&th->r_fork);
+	}
+	return (0);
 }
 
 void	*routine(void *th)
@@ -56,44 +77,21 @@ void	*routine(void *th)
 	long		start_time;
 
 	cpy = (t_thread*)th;
-	while (1)
+	start_time = get_time();
+	cpy->has_eaten = 0; // useless ?
+	if (lock_r_fork(cpy, start_time) != -1)
 	{
-		start_time = get_time();
-		if (cpy->num % 2)
-			try_lock_right();
+		if (cpy->has_eaten == 1)
+		{
+			sleeping(cpy, start_time);
+			thinking(cpy, start_time);
+		}
 		else
-			tru
-		cpy = eating(cpy, start_time);
-		start_time = get_time();
-		cpy = dying(cpy, start_time);
-
-		ft_usleep(1000);
+			dying(cpy, start_time);
 	}
-	if (cpy->info->nb_of_philos >= 2)
-	{
-//		if (pthread_mutex_lock(&cpy->fork))
-//			return (NULL);
-		printf("%ldms: %d has taken a fork\n", get_time() - start_time, cpy->num);
-	/*	if (pthread_mutex_lock(&cpy->right->fork)) // if (cpy right exist) else (c'est le 1er)
-			return (NULL);
-		printf("%ldms: %d has taken a fork", get_time() - start_time, cpy->num);
-		printf("%ldms: %d is eating", get_time() - start_time, cpy->num);
-		usleep(cpy->time_to_eat * 1000);
-		if (pthread_mutex_unlock(&cpy->right->fork))
-			return (NULL);	
-	*/
-/*		if (pthread_mutex_unlock(&cpy->fork))
-			return (NULL);
-		else
-			printf("pthread %d cannot lock fork\n", cpy->num);
-*/	}
-/*
-	if (get_time() - start_time >= cpy->time_to_die)
-		pthread_detach(cpy->id[cpy->num]);
-	if (cpy->nb_of_philos == 1)
-		;//dying
-*/	
-	return ((void*)cpy);
+	else
+		dying(cpy, start_time);
+	return (NULL);
 }
 
 int		do_some(t_thread *th)
@@ -110,7 +108,7 @@ int		do_some(t_thread *th)
 	cpy = th;
 	while (cpy)
 	{
-		if (pthread_join(cpy->pth, (void**)cpy))
+		if (pthread_join(cpy->pth, NULL))
 			return (-1);
 		cpy = cpy->right;
 	}
