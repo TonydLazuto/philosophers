@@ -17,47 +17,43 @@
 	wait(chopstick[(i+1) % 5])
 */
 
-void	sleeping(t_thread *th, int start_time)
-{
-	start_time = get_time();
-	printf("%ldms %d is sleeping", get_time() - start_time, th->num);
-	ft_usleep(th->info->time_to_sleep * 1000);
-}
-
-void	thinking(t_thread *th, int start_time)
-{
-	start_time = get_time();
-	printf("%ldms %d is thinking", get_time() - start_time, th->num);
-}
 
 void	dying(t_thread *th, int start_time)
 {
 	th->has_eaten = 0;
-	start_time = get_time();
-	ft_usleep(th->info->time_to_die * 1000);
-	printf("%ldms %d died", get_time() - start_time, th->num);
-	pthread_detach(th);
+	usleep(th->info.time_to_die);
+	printf("%ldms: %d died\n", get_time() - start_time, th->num);
+	pthread_detach(th->pth);
+}
+
+void	sleeping(t_thread *th, int start_time)
+{
+	printf("%ldms: %d is sleeping\n", get_time() - start_time, th->num);
+	usleep(th->info.time_to_sleep);
+	printf("%ldms: %d is thinking\n", get_time() - start_time, th->num);
+	dying(th, start_time);
 }
 
 int		lock_l_fork(t_thread *th, int start_time, pthread_mutex_t l_fork)
 {
 	if (pthread_mutex_lock(&l_fork))
 		return (-1);
-	printf("%ldms %d has taken a l_fork", get_time() - start_time, th->num);
-	printf("%ldms %d is eating", get_time() - start_time, th->num);
+	printf("%ldms: %d has taken a l_fork\n", get_time() - start_time, th->num);
+	printf("%ldms: %d is eating\n", get_time() - start_time, th->num);
 	th->last_meal = get_time() - start_time;
-	ft_usleep(th->info->time_to_eat * 1000);
+	usleep(th->info.time_to_eat);
 	th->has_eaten = 1;
-	if (pthread_mutex_unlock(&l_fork))
-		pthread_mutex_unlock(&th->r_fork);
+	pthread_mutex_unlock(&l_fork);
+	pthread_mutex_unlock(&th->r_fork);
 	return (0);
 }
 
 int		lock_r_fork(t_thread *th, int start_time)
 {
+//	printf("%ldms: %d try to take a r_fork\n", get_time() - start_time, th->num);
 	if (pthread_mutex_lock(&th->r_fork))
 		return (-1);
-	printf("%ldms: %d has taken a r_fork", get_time() - start_time, th->num);
+	printf("%ldms: %d has taken a r_fork\n", get_time() - start_time, th->num);
 	if (th->left)
 	{
 		if (lock_l_fork(th, start_time, th->left->r_fork) == -1)
@@ -70,7 +66,6 @@ int		lock_r_fork(t_thread *th, int start_time)
 	}
 	return (0);
 }
-
 void	*routine(void *th)
 {
 	t_thread	*cpy;
@@ -78,19 +73,18 @@ void	*routine(void *th)
 
 	cpy = (t_thread*)th;
 	start_time = get_time();
+	while (1) {
 	cpy->has_eaten = 0; // useless ?
-	if (lock_r_fork(cpy, start_time) != -1)
+	if (lock_r_fork(cpy, start_time) == 0)
 	{
 		if (cpy->has_eaten == 1)
-		{
 			sleeping(cpy, start_time);
-			thinking(cpy, start_time);
-		}
 		else
 			dying(cpy, start_time);
 	}
 	else
 		dying(cpy, start_time);
+	}
 	return (NULL);
 }
 
@@ -119,16 +113,20 @@ int main(int ac, char *av[])
 {
 	t_thread	*th;
 	t_info		info;
+	long start = get_time();
 
 	th = NULL;
 	if (check_args(ac, av, &info) == -1)
 		return (-1);
-	if (init(&th, info) == -1)
+	th = init(th, info);
+	if (!th)
 		return (-1);
 	while (1)
     {
-		if (do_some(th) == -1)
-			return (-1);
+		//if (do_some(th) == -1)
+		//	return (-1);
+		printf("%ld\n", get_time() - start);
+		ft_usleep(200 * 1000);
     }
 	if (destroy_mutex(th) == -1)
 		return (-1);

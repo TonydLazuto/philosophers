@@ -12,14 +12,18 @@
 
 #include "philo.h"
 
-t_thread	*new_nb(t_info *info, int num)
+t_thread	*new_nb(t_info info, int num)
 {
 	t_thread	*elet;
 
 	elet = (t_thread *)malloc(sizeof(*elet));
 	if (!elet)
 		return (NULL);
-	elet->info = info;
+	elet->info.nb_of_philos = info.nb_of_philos;
+	elet->info.time_to_die = info.time_to_die;
+	elet->info.time_to_eat = info.time_to_eat;
+	elet->info.time_to_sleep = info.time_to_sleep;
+	elet->info.lunch_time = info.lunch_time;
 	elet->num = num;
 	elet->has_eaten = 0;
 	elet->buf = NULL;
@@ -37,7 +41,7 @@ t_thread	*last_thread(t_thread *elet)
 	return (elet);
 }
 
-t_thread	*push_back(t_thread *list, t_info *info, int num)
+t_thread	*push_back(t_thread *list, t_info info, int num)
 {
 	t_thread	*elet;
 	t_thread	*tmp;

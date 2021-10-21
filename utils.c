@@ -38,7 +38,7 @@ int	ft_atoi(const char *str)
 /**
  * -----------------------------------------------
  */
-int		init(t_thread **th, t_info info)
+t_thread	*init(t_thread *th, t_info info)
 {
 	t_thread	*last;
 	int			i;
@@ -46,14 +46,14 @@ int		init(t_thread **th, t_info info)
 	i = 0;
 	while (i < info.nb_of_philos)
 	{
-		*th = push_back(*th, &info, i + 1);
-		if (!*th)
-			return (-1);
-		last = last_thread(*th);
+		th = push_back(th, info, i + 1);
+		if (!th)
+			return (NULL);
+		last = last_thread(th);
 		pthread_mutex_init(&last->r_fork, NULL);
 		i++;
 	}
-	return (0);
+	return (th);
 }
 
 
@@ -62,7 +62,7 @@ int		destroy_mutex(t_thread *th)
 	int i;
 
 	i = 0;
-	while (i < th->info->nb_of_philos)
+	while (i < th->info.nb_of_philos)
 	{
 		if (pthread_mutex_destroy(&th->r_fork))
 			return (-1);
@@ -85,11 +85,11 @@ long    get_time(void)
 	return (milliseconds);
 }
 
-void		ft_usleep(size_t time)
+void	ft_usleep(size_t time)
 {
 	size_t	start;
 
 	start = get_time();
-	while (get_time() - start < time)
-		usleep(100);
+	if (get_time() - start < time)
+		usleep(10000);
 }

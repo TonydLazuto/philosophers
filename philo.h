@@ -35,7 +35,7 @@ typedef struct s_info
 
 typedef struct s_thread
 {
-	t_info			*info;
+	t_info			info;
 	pthread_t		pth;
 	pthread_mutex_t	r_fork;
 	int				has_eaten;
@@ -49,11 +49,16 @@ typedef struct s_thread
 int			ft_atoi(const char *str);
 int			ft_isdigit(int c);
 int			check_args(int ac, char *av[], t_info *info);
-int			init(t_thread **pth, t_info info);
+t_thread	*init(t_thread *th, t_info info);
 int			destroy_mutex(t_thread *pth);
 long    	get_time(void);
 void		ft_usleep(size_t time);
-t_thread	*push_back(t_thread *list, t_info *info, int num);
+t_thread	*push_back(t_thread *list, t_info info, int num);
 t_thread	*last_thread(t_thread *elet);
+void  red();
+void  blue();
+void  green();
+void  yellow();
+void  reset();
 
 # endif
