@@ -17,118 +17,93 @@
 	wait(chopstick[(i+1) % 5])
 */
 
-
-void	dying(t_thread *th, int start_time)
+int		try_lock_other_fork(t_global *main, pthread_mutex_t *other_fork)
 {
-	th->has_eaten = 0;
-	usleep(th->info.time_to_die);
-	printf("%ldms: %d died\n", get_time() - start_time, th->num);
-	pthread_detach(th->pth);
-}
-
-void	sleeping(t_thread *th, int start_time)
-{
-	printf("%ldms: %d is sleeping\n", get_time() - start_time, th->num);
-	usleep(th->info.time_to_sleep);
-	printf("%ldms: %d is thinking\n", get_time() - start_time, th->num);
-	dying(th, start_time);
-}
-
-int		lock_l_fork(t_thread *th, int start_time, pthread_mutex_t l_fork)
-{
-	if (pthread_mutex_lock(&l_fork))
-		return (-1);
-	printf("%ldms: %d has taken a l_fork\n", get_time() - start_time, th->num);
-	printf("%ldms: %d is eating\n", get_time() - start_time, th->num);
-	th->last_meal = get_time() - start_time;
-	usleep(th->info.time_to_eat);
-	th->has_eaten = 1;
-	pthread_mutex_unlock(&l_fork);
-	pthread_mutex_unlock(&th->r_fork);
-	return (0);
-}
-
-int		lock_r_fork(t_thread *th, int start_time)
-{
-//	printf("%ldms: %d try to take a r_fork\n", get_time() - start_time, th->num);
-	if (pthread_mutex_lock(&th->r_fork))
-		return (-1);
-	printf("%ldms: %d has taken a r_fork\n", get_time() - start_time, th->num);
-	if (th->left)
+	if (pthread_mutex_lock(other_fork) == 0)
 	{
-		if (lock_l_fork(th, start_time, th->left->r_fork) == -1)
-			pthread_mutex_unlock(&th->r_fork);
-	}
-	else
-	{
-		if (lock_l_fork(th, start_time, last_thread(th)->r_fork) == -1)
-			pthread_mutex_unlock(&th->r_fork);
+		printf("%ld %d has taken the other fork\n", get_time(main->th->start_time), main->th->num);
+		eating(main);
+		return (1);
 	}
 	return (0);
 }
-void	*routine(void *th)
-{
-	t_thread	*cpy;
-	long		start_time;
 
-	cpy = (t_thread*)th;
-	start_time = get_time();
-	while (1) {
-	cpy->has_eaten = 0; // useless ?
-	if (lock_r_fork(cpy, start_time) == 0)
+void	try_to_eat(t_global *main)
+{
+	if (main->th->has_eaten)
+		main->th->start_time = get_time(main->th->start_time);
+	if (main->th->num % 2)
 	{
-		if (cpy->has_eaten == 1)
-			sleeping(cpy, start_time);
-		else
-			dying(cpy, start_time);
+		if (pthread_mutex_lock(&main->th->left_fork) == 0)
+		{
+			printf("%ld %d has taken the left fork\n", get_time(main->th->start_time), main->th->num);
+			if (!try_lock_other_fork(main, &main->th->right_fork))
+				pthread_mutex_unlock(&main->th->left_fork);
+		}
 	}
 	else
-		dying(cpy, start_time);
+	{
+		if (pthread_mutex_lock(&main->th->right_fork) == 0)
+		{
+			printf("%ld %d has taken the right fork\n", get_time(main->th->start_time), main->th->num);
+			if (!try_lock_other_fork(main, &main->th->left_fork))
+				pthread_mutex_unlock(&main->th->right_fork);
+		}
+	}
+}
+
+void	*routine(void *main)
+{
+	t_global	*cpy;
+
+	cpy = (t_global*)main;
+	while (1)
+	{
+		cpy->th->start_time = get_time(cpy->th->start_time);
+		cpy->th->has_eaten = 0;
+		try_to_eat(cpy);
+		rest(cpy);
 	}
 	return (NULL);
 }
 
-int		do_some(t_thread *th)
+int		do_some(t_global main)
 {
 	t_thread	*cpy;
 
-	cpy = th;
-	while (cpy)
+	cpy = main.th;
+//	if (!cpy->right)
+//		eat_alone();
+	main.th = init_forks(main.th);
+	while (main.th)
 	{
-		if (pthread_create(&cpy->pth, NULL, &routine, (void*)cpy))
+		if (pthread_create(&main.th->pth, NULL, &routine, (void*)&main))
 			return (-1);
-		cpy = cpy->right;
+		main.th = main.th->right;
 	}
-	cpy = th;
-	while (cpy)
+	main.th = cpy;
+	while (main.th)
 	{
-		if (pthread_join(cpy->pth, NULL))
+		if (pthread_join(main.th->pth, NULL))
 			return (-1);
-		cpy = cpy->right;
+		main.th = main.th->right;
 	}
 	return (0);
 }
 
 int main(int ac, char *av[])
 {
-	t_thread	*th;
-	t_info		info;
-	long start = get_time();
+	t_global	main;
 
-	th = NULL;
-	if (check_args(ac, av, &info) == -1)
+	main.th = NULL;
+	main.buf = NULL;
+	if (check_args(ac, av) == -1)
 		return (-1);
-	th = init(th, info);
-	if (!th)
+	if (init(av, &main) == -1)
 		return (-1);
-	while (1)
-    {
-		//if (do_some(th) == -1)
-		//	return (-1);
-		printf("%ld\n", get_time() - start);
-		ft_usleep(410);
-    }
-	if (destroy_mutex(th) == -1)
+	if (do_some(main) == -1)
+		return (-1);
+	if (destroy_mutex(&main) == -1)
 		return (-1);
 	return (0);
 }

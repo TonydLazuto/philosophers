@@ -14,7 +14,9 @@ OBJ_DIR		=	obj
 
 SRCS		=	philo.c \
 				check.c \
+				actions.c \
 				utils.c \
+				init.c \
 				lst_th.c
 
 OBJS		=	$(addprefix $(OBJ_DIR)/,$(SRCS:.c=.o))

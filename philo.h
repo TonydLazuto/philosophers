@@ -27,35 +27,55 @@
 
 typedef struct s_info
 {
-	int		nb_of_philos;
-	int		time_to_die;
-	int		time_to_eat;
-	int		time_to_sleep;
-	int		lunch_time;
+	long	nb_of_philos;
+	long	time_to_die;
+	long	time_to_eat;
+	long	time_to_sleep;
+	long	nb_meals;
 }				t_info;
 
 typedef struct s_thread
 {
-	t_info			info;
+	int				num;
 	pthread_t		pth;
-	pthread_mutex_t	r_fork;
+	pthread_mutex_t	right_fork;
+	pthread_mutex_t	left_fork;
+	long			start_time;
 	int				has_eaten;
 	long			last_meal;
-	int				num;
-	char			*buf;
 	struct s_thread	*left;
 	struct s_thread	*right;
 }				t_thread;
 
-int			ft_atoi(const char *str);
+typedef struct s_global
+{
+	t_thread		*th;
+	t_info			info;
+	char			*buf;
+}				t_global;
+
+long		ft_atoi(const char *str);
 int			ft_isdigit(int c);
-int			check_args(int ac, char *av[], t_info *info);
-t_thread	*init(t_thread *th, t_info info);
-int			destroy_mutex(t_thread *pth);
-long    	get_time(void);
-void		ft_usleep(size_t time);
-t_thread	*push_back(t_thread *list, t_info info, int num);
+int			ft_strlen(const char *s);
+int			check_args(int ac, char *av[]);
+
+t_thread	*push_back(t_thread *list, int num);
 t_thread	*last_thread(t_thread *elet);
+
+int			init(char *av[], t_global *main);
+int			destroy_mutex(t_global *main);
+t_thread	*init_forks(t_thread *th);
+
+long    	get_time(long start_time);
+void		ft_usleep(size_t time, long start_time);
+
+void		try_to_eat(t_global *main);
+void		dying(t_global *main);
+void		sleeping(t_global *main);
+void		eating(t_global *main);
+void		rest(t_global *main);
+int			check_last_meal(t_global *main);
+
 void  red();
 void  blue();
 void  green();
