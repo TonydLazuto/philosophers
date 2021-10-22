@@ -91,5 +91,5 @@ void	ft_usleep(size_t time)
 
 	start = get_time();
 	if (get_time() - start < time)
-		usleep(10000);
+		usleep(100);
 }

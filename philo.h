@@ -16,13 +16,14 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
+# include <limits.h>
 
-#include <string.h>
-#include <sys/time.h>
-#include <pthread.h>
+# include <string.h>
+# include <sys/time.h>
+# include <pthread.h>
 
-#include <errno.h>
-#include <ctype.h>
+# include <errno.h>
+# include <ctype.h>
 
 typedef struct s_info
 {

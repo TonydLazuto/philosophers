@@ -126,7 +126,7 @@ int main(int ac, char *av[])
 		//if (do_some(th) == -1)
 		//	return (-1);
 		printf("%ld\n", get_time() - start);
-		ft_usleep(200 * 1000);
+		ft_usleep(410);
     }
 	if (destroy_mutex(th) == -1)
 		return (-1);
