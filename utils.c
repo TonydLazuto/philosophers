@@ -53,20 +53,19 @@ int		ft_strlen(const char *s)
 
 long    get_time()
 {
-	struct timeval	tp;
+	struct timeval	tv;
 	long			milliseconds;
 
-	gettimeofday(&tp, NULL);
-	milliseconds = tp.tv_sec * 1000;
-	milliseconds += tp.tv_usec / 1000 ;
+	gettimeofday(&tv, NULL);
+	milliseconds = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 	return (milliseconds);
 }
 
-void	ft_usleep(long time, long start_time)
+void	ft_usleep(long time)
 {
 	long	start;
 
-	start = get_time(start_time);
+	start = get_time();
 	if (get_time() - start < time)
 		usleep(100);
 }

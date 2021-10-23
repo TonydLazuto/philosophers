@@ -79,8 +79,11 @@ t_philo	*pop_front(t_philo *list)
 
 void	clear_philos(t_philo **lst)
 {
-	while ((*lst)->left)
-		*lst = (*lst)->left;
+	if ((*lst)->left)
+	{
+		while ((*lst)->left)
+			*lst = (*lst)->left;
+	}
 	while (*lst)
 		*lst = pop_front(*lst);
 }

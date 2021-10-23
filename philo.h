@@ -41,6 +41,7 @@ typedef struct s_philo
 	pthread_t		pth;
 	pthread_mutex_t	right_fork;
 	pthread_mutex_t	left_fork;
+	pthread_mutex_t	text;
 	long			nb_meals;
 	long			start_time;
 	int				has_eaten;
@@ -60,16 +61,16 @@ t_philo		*last_philo(t_philo *elet);
 void		clear_philos(t_philo **lst);
 
 t_philo		*init(char *av[], t_philo *phil, t_info *info);
-int			destroy_mutex(t_philo **phil);
-t_philo		*init_forks(t_philo *th);
+int			destroy_mutex(t_philo **phil, t_info info);
+t_philo		*link_forks(t_philo *th);
 
 long    	get_time();
-void		ft_usleep(long time, long start_time);
+void		ft_usleep(long time);
 
 void		try_to_eat(t_philo *main);
-void		dying(t_philo *main);
+void		eating(t_philo *phil);
 void		sleeping(t_philo *main);
-void		eating(t_philo *main);
+void		thinking(t_philo *main);
 void		rest(t_philo *main);
 int			check_last_meal(t_philo *main);
 

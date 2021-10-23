@@ -46,45 +46,40 @@ void	try_to_eat(t_philo *phil)
 void	*routine(void *phil)
 {
 	t_philo *cpy;
+//	int		i = 0;
 
 	cpy = (t_philo *)phil;
-//int	i = 0;
-//	cpy->th->start_time = get_time();
-//	while (i < 1)
+//	while (i < 2)
 //	{
 		eating(cpy);
 		sleeping(cpy);
-		dying(cpy);
+		thinking(cpy);
 //		i++;
 //	}
 	return (NULL);
 }
 
-int		do_some(t_philo *phil, t_info info)
+int		do_some(t_philo *phil)
 {
-	int			i;
 	t_philo		*cpy;
 
-	i = 0;
 	cpy = phil;
 //	if (!cpy->right)
 //		eat_alone();
-//	phil = init_forks(phil);
-	while (i < info.nb_of_philos)
+//	phil = link_forks(phil);
+	phil->start_time = get_time();
+	while (phil)
 	{
 		if (pthread_create(&phil->pth, NULL, &routine, (void*)phil))
 			return (-1);
 		usleep(100);
 		phil = phil->right;
-		i++;
 	}
-	i = 0;
-	while (i < info.nb_of_philos)
+	while (cpy)
 	{
 		if (pthread_join(cpy->pth, NULL))
 			return (-1);
 		cpy = cpy->right;
-		i++;
 	}
 	return (0);
 }
@@ -100,9 +95,9 @@ int		main(int ac, char *av[])
 	phil = init(av, phil, &info);
 	if (!phil)
 		return (-1);
-	if (do_some(phil, info) == -1)
+	if (do_some(phil) == -1)
 		return (-1);
-//	if (destroy_mutex(&phil) == -1)
+//	if (destroy_mutex(&phil, info) == -1)
 //		return (-1);
 	clear_philos(&phil);
 	return (0);

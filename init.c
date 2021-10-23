@@ -32,27 +32,31 @@ t_philo		*init(char *av[], t_philo *phil, t_info *info)
 		push_back(&phil, i + 1, info, nb_meals);
 		if (!phil)
 			return (NULL);
-//		last = last_philo(*phil);
+//		last = last_philo(phil);
 //		pthread_mutex_init(&last->right_fork, NULL);
 //		pthread_mutex_init(&last->left_fork, NULL);
+//		pthread_mutex_init(&last->text, NULL);
 		i++;
 	}
-
 	return (phil);
 }
 
-int			destroy_mutex(t_philo **phil)
+
+int			destroy_mutex(t_philo **phil, t_info info)
 {
 	int i;
 
 	i = 0;
 	while ((*phil)->left)
 		*phil = (*phil)->left;
-	while (i < (*phil)->info->nb_of_philos)
+	while (i < info.nb_of_philos)
 	{
-		if (pthread_mutex_destroy(&(*phil)->right_fork))
+/*		if (pthread_mutex_destroy(&(*phil)->right_fork))
 			return (-1);
 		if (pthread_mutex_destroy(&(*phil)->left_fork))
+			return (-1);
+*/
+		if (pthread_mutex_destroy(&(*phil)->text))
 			return (-1);
 		*phil = (*phil)->right;
 		i++;
@@ -60,7 +64,7 @@ int			destroy_mutex(t_philo **phil)
 	return (0);
 }
 
-t_philo		*init_forks(t_philo *phil)
+t_philo		*link_forks(t_philo *phil)
 {
 	t_philo	*cpy;
 
