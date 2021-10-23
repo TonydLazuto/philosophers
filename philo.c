@@ -17,93 +17,93 @@
 	wait(chopstick[(i+1) % 5])
 */
 
-int		try_lock_other_fork(t_global *main, pthread_mutex_t *other_fork)
+void	try_to_eat(t_philo *phil)
 {
-	if (pthread_mutex_lock(other_fork) == 0)
+//	if (phil->has_eaten)
+//		phil->start_time = get_time(phil->start_time);
+	if (phil->num % 2)
 	{
-		printf("%ld %d has taken the other fork\n", get_time(main->th->start_time), main->th->num);
-		eating(main);
-		return (1);
-	}
-	return (0);
-}
-
-void	try_to_eat(t_global *main)
-{
-	if (main->th->has_eaten)
-		main->th->start_time = get_time(main->th->start_time);
-	if (main->th->num % 2)
-	{
-		if (pthread_mutex_lock(&main->th->left_fork) == 0)
-		{
-			printf("%ld %d has taken the left fork\n", get_time(main->th->start_time), main->th->num);
-			if (!try_lock_other_fork(main, &main->th->right_fork))
-				pthread_mutex_unlock(&main->th->left_fork);
-		}
+//		pthread_mutex_lock(&phil->left_fork);
+//		printf("%ld %d has taken the left fork\n", get_time(phil->start_time), phil->num);
+//		pthread_mutex_lock(&phil->right_fork);
+//		printf("%ld %d has taken the other fork\n", get_time(phil->start_time), phil->num);
+		eating(phil);
+//		pthread_mutex_unlock(&phil->right_fork);
+//		pthread_mutex_unlock(&phil->left_fork);
 	}
 	else
 	{
-		if (pthread_mutex_lock(&main->th->right_fork) == 0)
-		{
-			printf("%ld %d has taken the right fork\n", get_time(main->th->start_time), main->th->num);
-			if (!try_lock_other_fork(main, &main->th->left_fork))
-				pthread_mutex_unlock(&main->th->right_fork);
-		}
+//		pthread_mutex_lock(&phil->right_fork);
+//		printf("%ld %d has taken the right fork\n", get_time(phil->start_time), phil->num);
+//		pthread_mutex_lock(&phil->left_fork);
+//		printf("%ld %d has taken the other fork\n", get_time(phil->start_time), phil->num);
+		eating(phil);
+//		pthread_mutex_unlock(&phil->left_fork);
+//		pthread_mutex_unlock(&phil->right_fork);
 	}
 }
 
-void	*routine(void *main)
+void	*routine(void *phil)
 {
-	t_global	*cpy;
+	t_philo *cpy;
 
-	cpy = (t_global*)main;
-	while (1)
-	{
-		cpy->th->start_time = get_time(cpy->th->start_time);
-		cpy->th->has_eaten = 0;
-		try_to_eat(cpy);
-		rest(cpy);
-	}
+	cpy = (t_philo *)phil;
+//int	i = 0;
+//	cpy->th->start_time = get_time();
+//	while (i < 1)
+//	{
+		eating(cpy);
+		sleeping(cpy);
+		dying(cpy);
+//		i++;
+//	}
 	return (NULL);
 }
 
-int		do_some(t_global main)
+int		do_some(t_philo *phil, t_info info)
 {
-	t_thread	*cpy;
+	int			i;
+	t_philo		*cpy;
 
-	cpy = main.th;
+	i = 0;
+	cpy = phil;
 //	if (!cpy->right)
 //		eat_alone();
-	main.th = init_forks(main.th);
-	while (main.th)
+//	phil = init_forks(phil);
+	while (i < info.nb_of_philos)
 	{
-		if (pthread_create(&main.th->pth, NULL, &routine, (void*)&main))
+		if (pthread_create(&phil->pth, NULL, &routine, (void*)phil))
 			return (-1);
-		main.th = main.th->right;
+		usleep(100);
+		phil = phil->right;
+		i++;
 	}
-	main.th = cpy;
-	while (main.th)
+	i = 0;
+	while (i < info.nb_of_philos)
 	{
-		if (pthread_join(main.th->pth, NULL))
+		if (pthread_join(cpy->pth, NULL))
 			return (-1);
-		main.th = main.th->right;
+		cpy = cpy->right;
+		i++;
 	}
 	return (0);
 }
 
-int main(int ac, char *av[])
+int		main(int ac, char *av[])
 {
-	t_global	main;
+	t_philo		*phil;
+	t_info		info;
 
-	main.th = NULL;
-	main.buf = NULL;
+	phil = NULL;
 	if (check_args(ac, av) == -1)
 		return (-1);
-	if (init(av, &main) == -1)
+	phil = init(av, phil, &info);
+	if (!phil)
 		return (-1);
-	if (do_some(main) == -1)
+	if (do_some(phil, info) == -1)
 		return (-1);
-	if (destroy_mutex(&main) == -1)
-		return (-1);
+//	if (destroy_mutex(&phil) == -1)
+//		return (-1);
+	clear_philos(&phil);
 	return (0);
 }

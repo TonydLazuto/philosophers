@@ -12,23 +12,26 @@
 
 #include "philo.h"
 
-t_thread	*new_nb(int num)
+t_philo	*new_philo(int num, t_info *info, long nb_meals)
 {
-	t_thread	*elet;
+	t_philo	*elet;
 
-	elet = (t_thread *)malloc(sizeof(*elet));
+	elet = (t_philo *)malloc(sizeof(*elet));
 	if (!elet)
 		return (NULL);
 	elet->num = num;
+	elet->nb_meals = nb_meals;
+	elet->info = info;
 	elet->start_time = 0;
 	elet->has_eaten = 0;
 	elet->last_meal = 0;
+	elet->buf = NULL;
 	elet->right = NULL;
 	elet->left = NULL;
 	return (elet);
 }
 
-t_thread	*last_thread(t_thread *elet)
+t_philo	*last_philo(t_philo *elet)
 {
 	if (!elet)
 		return (NULL);
@@ -37,39 +40,47 @@ t_thread	*last_thread(t_thread *elet)
 	return (elet);
 }
 
-t_thread	*push_back(t_thread *list, int num)
+void	push_back(t_philo **list, int num,
+						t_info *info, long nb_meals)
 {
-	t_thread	*elet;
-	t_thread	*tmp;
+	t_philo	*elet;
+	t_philo	*tmp;
 
-	elet = new_nb(num);
-	tmp = list;
+	tmp = NULL;
+	elet = new_philo(num, info, nb_meals);
 	if (!elet)
-		return (NULL);
-	if (!list)
-		return (elet);
-	tmp = last_thread(tmp);
+		return ;
+	if (!*list)
+	{
+		*list = elet;
+		return ;
+	}
+	tmp = last_philo(*list);
 	elet->left = tmp;
 	tmp->right = elet;
-	return (list);
 }
 
-t_thread	*pop_front(t_thread *list)
+t_philo	*pop_front(t_philo *list)
 {
-	t_thread	*first;
+	t_philo	*first;
 
 	first = list;
 	if (!list)
 		return (NULL);
 	list = list->right;
 	first->right = NULL;
+	first->left = NULL;
+	if (list)
+		list->left = NULL;
 	free(first);
 	first = NULL;
 	return (list);
 }
 
-void	clear_lst(t_thread **lst)
+void	clear_philos(t_philo **lst)
 {
+	while ((*lst)->left)
+		*lst = (*lst)->left;
 	while (*lst)
 		*lst = pop_front(*lst);
 }

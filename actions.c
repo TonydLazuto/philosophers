@@ -12,62 +12,27 @@
 
 #include "philo.h"
 
-int		check_last_meal(t_global *main)
+void	dying(t_philo *phil)
 {
-	if (main->th->last_meal)
-	{
-		;
-	}
-	return (0);
+//	phil->start_time = get_time(phil->start_time);
+//	printf("%ld %d is thinking\n", get_time() - phil->start_time, phil->num);
+	printf("%d is thinking\n",phil->num);
+//	usleep(phil->info.time_to_sleep * 1000);
+//	printf("%ld %d died\n", get_time(), phil->num);
 }
 
-void	dying(t_global *main)
+void	sleeping(t_philo *phil)
 {
-	long	time;
-	long	starving;
-
-	time = 0;
-	if (get_time(main->th->start_time) - main->th->start_time
-			> main->th->last_meal * 1000)
-	{
-		;
-	}
-	while (time < main->info.time_to_die  * 1000)
-	{
-		if (main->th->has_eaten)
-		{
-			try_to_eat(main);
-		}
-		usleep(1000);
-		time += 1000;
-	}
-	printf("%ld %d died\n", get_time(main->th->start_time), main->th->num);
-	pthread_detach(main->th->pth);
+//	phil->start_time = get_time(phil->start_time);
+//	printf("%ld %d is sleeping\n", get_time() - phil->start_time, phil->num);
+	printf("%d is sleeping\n",phil->num);
+//	usleep(phil->info.time_to_sleep * 1000);
 }
 
-void	sleeping(t_global *main)
-{
-	printf("%ld %d is sleeping\n", get_time(main->th->start_time), main->th->num);
-	usleep(main->info.time_to_sleep * 1000);
-	printf("%ld %d is thinking\n", get_time(main->th->start_time), main->th->num);
-}
-
-void	eating(t_global *main)
+void	eating(t_philo *phil)
 {	
-	printf("%ld %d is eating\n", get_time(main->th->start_time), main->th->num);
-	usleep(main->info.time_to_eat * 1000);
-	main->th->last_meal = get_time(main->th->start_time);
-	pthread_mutex_unlock(&main->th->left_fork);
-	pthread_mutex_unlock(&main->th->right_fork);
-}
-
-void	rest(t_global *main)
-{
-	if (main->th->has_eaten)
-	{
-		sleeping(main);
-		dying(main);
-	}
-	else
-		dying(main);
+//	phil->start_time = get_time(phil->start_time);
+//	printf("%ld %d is eating\n", get_time() - phil->start_time, phil->num);
+	printf("%d is eating\n",phil->num);
+//	usleep(phil->info.time_to_eat * 1000);
 }

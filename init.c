@@ -12,65 +12,70 @@
 
 #include "philo.h"
 
-int			init(char *av[], t_global *main)
+t_philo		*init(char *av[], t_philo *phil, t_info *info)
 {
-	t_thread	*last;
+//	t_philo		*last;
 	int			i;
+	long		nb_meals;
 
 	i = 0;
-	main->info.nb_of_philos = ft_atoi(av[1]);
-	main->info.time_to_die = ft_atoi(av[2]);
-	main->info.time_to_eat = ft_atoi(av[3]);
-	main->info.time_to_sleep = ft_atoi(av[4]);
+	info->nb_of_philos = ft_atoi(av[1]);
+	info->time_to_die = ft_atoi(av[2]);
+	info->time_to_eat = ft_atoi(av[3]);
+	info->time_to_sleep = ft_atoi(av[4]);
 	if (av[5])
-		main->info.nb_meals = ft_atoi(av[5]);
+		nb_meals = ft_atoi(av[5]);
 	else
-		main->info.nb_meals = 0;
-	while (i < main->info.nb_of_philos)
+		nb_meals = 0;
+	while (i < info->nb_of_philos)
 	{
-		main->th = push_back(main->th, i + 1);
-		if (!main->th)
-			return (-1);
-		last = last_thread(main->th);
-		pthread_mutex_init(&last->right_fork, NULL);
-		pthread_mutex_init(&last->left_fork, NULL);
+		push_back(&phil, i + 1, info, nb_meals);
+		if (!phil)
+			return (NULL);
+//		last = last_philo(*phil);
+//		pthread_mutex_init(&last->right_fork, NULL);
+//		pthread_mutex_init(&last->left_fork, NULL);
 		i++;
 	}
-	return (0);
+
+	return (phil);
 }
 
-int			destroy_mutex(t_global *main)
+int			destroy_mutex(t_philo **phil)
 {
 	int i;
 
 	i = 0;
-	while (i < main->info.nb_of_philos)
+	while ((*phil)->left)
+		*phil = (*phil)->left;
+	while (i < (*phil)->info->nb_of_philos)
 	{
-		if (pthread_mutex_destroy(&main->th->right_fork))
+		if (pthread_mutex_destroy(&(*phil)->right_fork))
 			return (-1);
-		if (pthread_mutex_destroy(&main->th->left_fork))
+		if (pthread_mutex_destroy(&(*phil)->left_fork))
 			return (-1);
+		*phil = (*phil)->right;
 		i++;
 	}
 	return (0);
 }
 
-t_thread	*init_forks(t_thread *th)
+t_philo		*init_forks(t_philo *phil)
 {
-	t_thread	*cpy;
+	t_philo	*cpy;
 
-	cpy = th;
+	cpy = phil;
 	while (cpy)
 	{
 		if (cpy->right)
 			cpy->right_fork = cpy->right->left_fork;
 		else
-			cpy->right_fork = th->left_fork;
+			cpy->right_fork = phil->left_fork;
 		if (cpy->left)
 			cpy->left_fork = cpy->left->right_fork;
 		else
-			cpy->left_fork = last_thread(th)->right_fork;
+			cpy->left_fork = last_philo(phil)->right_fork;
 		cpy = cpy->right;
 	}
-	return (th);
+	return (phil);
 }

@@ -31,50 +31,47 @@ typedef struct s_info
 	long	time_to_die;
 	long	time_to_eat;
 	long	time_to_sleep;
-	long	nb_meals;
 }				t_info;
 
-typedef struct s_thread
+typedef struct s_philo
 {
 	int				num;
+	t_info			*info;
+	char			*buf;
 	pthread_t		pth;
 	pthread_mutex_t	right_fork;
 	pthread_mutex_t	left_fork;
+	long			nb_meals;
 	long			start_time;
 	int				has_eaten;
 	long			last_meal;
-	struct s_thread	*left;
-	struct s_thread	*right;
-}				t_thread;
-
-typedef struct s_global
-{
-	t_thread		*th;
-	t_info			info;
-	char			*buf;
-}				t_global;
+	struct s_philo	*left;
+	struct s_philo	*right;
+}				t_philo;
 
 long		ft_atoi(const char *str);
 int			ft_isdigit(int c);
 int			ft_strlen(const char *s);
 int			check_args(int ac, char *av[]);
 
-t_thread	*push_back(t_thread *list, int num);
-t_thread	*last_thread(t_thread *elet);
+void		push_back(t_philo **list, int num,
+						t_info *info, long nb_meals);
+t_philo		*last_philo(t_philo *elet);
+void		clear_philos(t_philo **lst);
 
-int			init(char *av[], t_global *main);
-int			destroy_mutex(t_global *main);
-t_thread	*init_forks(t_thread *th);
+t_philo		*init(char *av[], t_philo *phil, t_info *info);
+int			destroy_mutex(t_philo **phil);
+t_philo		*init_forks(t_philo *th);
 
-long    	get_time(long start_time);
-void		ft_usleep(size_t time, long start_time);
+long    	get_time();
+void		ft_usleep(long time, long start_time);
 
-void		try_to_eat(t_global *main);
-void		dying(t_global *main);
-void		sleeping(t_global *main);
-void		eating(t_global *main);
-void		rest(t_global *main);
-int			check_last_meal(t_global *main);
+void		try_to_eat(t_philo *main);
+void		dying(t_philo *main);
+void		sleeping(t_philo *main);
+void		eating(t_philo *main);
+void		rest(t_philo *main);
+int			check_last_meal(t_philo *main);
 
 void  red();
 void  blue();
