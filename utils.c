@@ -46,7 +46,6 @@ char	*superjoinfree(char *s1, char *s2, char *s3)
 	str = append_str(str, s1);
 	str = append_str(str, " ");
 	str = append_str(str, s2);
-	str = append_str(str, " ");
 	str = append_str(str, s3);
 	ft_free(&s1);
 	ft_free(&s2);

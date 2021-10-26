@@ -22,9 +22,10 @@ t_philo	*new_philo(int num, t_info *info, long nb_meals)
 	elet->num = num;
 	elet->nb_meals = nb_meals;
 	elet->info = info;
-	elet->has_eaten = 0;
+	elet->starving = 0;
 	elet->last_meal = 0;
 	elet->buf = NULL;
+	elet->died = 0;
 	elet->right = NULL;
 	elet->left = NULL;
 	return (elet);

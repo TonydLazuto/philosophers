@@ -34,11 +34,11 @@
 # define BOLDCYAN "\033[1m\033[36m"
 # define BOLDWHITE "\033[1m\033[37m"
 
-# define TAKEFORK "has taken a fork\n"
-# define EATING "is eating\n"
-# define SLEEPING "is sleeping\n"
-# define THINKING "is thinking\n"
-# define DIED "died\n"
+# define TAKEFORK " has taken a fork\n"
+# define EATING " is eating\n"
+# define SLEEPING " is sleeping\n"
+# define THINKING " is thinking\n"
+# define DIED " died\n"
 
 typedef struct s_info
 {
@@ -55,12 +55,14 @@ typedef struct s_philo
 	t_info			*info;
 	char			*buf;
 	pthread_t		pth;
+	pthread_t		death;
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*text;
 	long			nb_meals;
-	int				has_eaten;
+	int				starving;
 	long			last_meal;
+	int				died;
 	struct s_philo	*left;
 	struct s_philo	*right;
 }				t_philo;
@@ -72,7 +74,7 @@ void		ft_free(char **s);
 char		*ft_itoa(long nb);
 void		ft_putstr(char *s);
 char		*superjoinfree(char *s1, char *s2, char *s3);
-void		print_msg(long timestamp, int num_philo, char *state);
+void		print_msg(long timestamp, int num_philo, char *state, t_philo *phil);
 
 int			check_args(int ac, char *av[]);
 void		push_back(t_philo **list, int num,

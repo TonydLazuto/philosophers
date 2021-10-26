@@ -21,43 +21,49 @@
 	or the beginning of the simulation, it dies
 */
 
-void	try_to_eat(t_philo *phil)
+void	*check_death(void *phil)
 {
-//	if (phil->has_eaten)
-//		phil->start_time = get_time(phil->start_time);
-	if (phil->num % 2)
+	t_philo		*cpy;
+
+	cpy = (t_philo *)phil;
+	ft_usleep(cpy->info->time_to_eat + 1);
+	while (1)
 	{
-		pthread_mutex_lock(phil->left_fork);
-		printf("%ld %d has taken the left fork\n", get_current_time(phil->info->start_time), phil->num);
-		pthread_mutex_lock(phil->right_fork);
-		printf("%ld %d has taken the right fork\n", get_current_time(phil->info->start_time), phil->num);
-		eating(phil);
-		pthread_mutex_unlock(phil->right_fork);
-		pthread_mutex_unlock(phil->left_fork);
+		if (!cpy->last_meal)
+			cpy->last_meal = cpy->info->start_time;
+		if (get_current_time(cpy->info->start_time) - cpy->last_meal
+				>= cpy->info->time_to_die)
+		{
+			cpy->died = 1;
+//			pthread_mutex_lock(cpy->text);
+			print_msg(get_current_time(cpy->info->start_time), cpy->num, DIED, cpy);
+		//	printf("%ld %d died\n", get_time()- cpy->info->start_time, cpy->num);
+//			pthread_mutex_unlock(cpy->text);
+			break ;
+		}
+//		if (get_current_time(cpy->info->start_time) - cpy->last_meal > cpy->info->time_to_die / 2)
+//			cpy->starving = 1;
+		ft_usleep(50);
 	}
-	else
-	{
-		pthread_mutex_lock(phil->right_fork);
-		printf("%ld %d has taken the right fork\n", get_current_time(phil->info->start_time), phil->num);
-		pthread_mutex_lock(phil->left_fork);
-		printf("%ld %d has taken the left fork\n", get_current_time(phil->info->start_time), phil->num);
-		eating(phil);
-		pthread_mutex_unlock(phil->left_fork);
-		pthread_mutex_unlock(phil->right_fork);
-	}
+	return (NULL);
 }
 
 void	*routine(void *phil)
 {
 	t_philo	*cpy;
-	int		i = 0;
 
 	cpy = (t_philo *)phil;
-	while (i < 2)
+	int i = 0;
+//	try_to_eat(cpy);
+//	if (pthread_create(&cpy->death, NULL, &check_death, (void*)cpy))
+//		return (NULL);
+	while (i < 5)
 	{
-		eating(cpy);
+		try_to_eat(cpy);
 		i++;
 	}
+//	if (pthread_detach(cpy->death))
+//		return (NULL);
 	return (NULL);
 }
 
@@ -81,6 +87,7 @@ int		do_some(t_philo *phil, t_info *info)
 			return (-1);
 		cpy = cpy->right;
 	}
+
 	return (0);
 }
 
