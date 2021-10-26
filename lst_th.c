@@ -76,7 +76,7 @@ t_philo	*pop_front(t_philo *list)
 	return (list);
 }
 
-void	clear_philos(t_philo **lst)
+int		clear_philos(t_philo **lst)
 {
 	if ((*lst)->left)
 	{
@@ -84,5 +84,10 @@ void	clear_philos(t_philo **lst)
 			*lst = (*lst)->left;
 	}
 	while (*lst)
+	{
+		if (destroy_mutex(*lst) == -1)
+			return (-1);
 		*lst = pop_front(*lst);
+	}
+	return (0);
 }

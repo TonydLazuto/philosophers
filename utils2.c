@@ -47,22 +47,9 @@ int		ft_strlen(const char *s)
 	return (len);
 }
 
-void	ft_putchar(char c)
+void	ft_putstr(char *s)
 {
-	write(1, &c, 1);
-}
-
-void	ft_putendl(char *s)
-{
-	int	i;
-
-	i = 0;
 	if (!s)
 		return ;
-	while (s[i])
-	{
-		ft_putchar(s[i]);
-		i++;
-	}
-	ft_putchar('\n');
+	write(1, s, ft_strlen(s));
 }

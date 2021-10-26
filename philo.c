@@ -27,23 +27,23 @@ void	try_to_eat(t_philo *phil)
 //		phil->start_time = get_time(phil->start_time);
 	if (phil->num % 2)
 	{
-//		pthread_mutex_lock(&phil->left_fork);
-//		printf("%ld %d has taken the left fork\n", get_time(phil->start_time), phil->num);
-//		pthread_mutex_lock(&phil->right_fork);
-//		printf("%ld %d has taken the other fork\n", get_time(phil->start_time), phil->num);
+		pthread_mutex_lock(phil->left_fork);
+		printf("%ld %d has taken the left fork\n", get_current_time(phil->info->start_time), phil->num);
+		pthread_mutex_lock(phil->right_fork);
+		printf("%ld %d has taken the right fork\n", get_current_time(phil->info->start_time), phil->num);
 		eating(phil);
-//		pthread_mutex_unlock(&phil->right_fork);
-//		pthread_mutex_unlock(&phil->left_fork);
+		pthread_mutex_unlock(phil->right_fork);
+		pthread_mutex_unlock(phil->left_fork);
 	}
 	else
 	{
-//		pthread_mutex_lock(&phil->right_fork);
-//		printf("%ld %d has taken the right fork\n", get_time(phil->start_time), phil->num);
-//		pthread_mutex_lock(&phil->left_fork);
-//		printf("%ld %d has taken the other fork\n", get_time(phil->start_time), phil->num);
+		pthread_mutex_lock(phil->right_fork);
+		printf("%ld %d has taken the right fork\n", get_current_time(phil->info->start_time), phil->num);
+		pthread_mutex_lock(phil->left_fork);
+		printf("%ld %d has taken the left fork\n", get_current_time(phil->info->start_time), phil->num);
 		eating(phil);
-//		pthread_mutex_unlock(&phil->left_fork);
-//		pthread_mutex_unlock(&phil->right_fork);
+		pthread_mutex_unlock(phil->left_fork);
+		pthread_mutex_unlock(phil->right_fork);
 	}
 }
 
@@ -56,8 +56,6 @@ void	*routine(void *phil)
 	while (i < 2)
 	{
 		eating(cpy);
-		sleeping(cpy);
-		thinking(cpy);
 		i++;
 	}
 	return (NULL);
@@ -70,7 +68,6 @@ int		do_some(t_philo *phil, t_info *info)
 	cpy = phil;
 //	if (!cpy->right)
 //		eat_alone();
-//	phil = link_forks(phil);
 	info->start_time = get_time();
 	while (phil)
 	{
@@ -98,13 +95,9 @@ int		main(int ac, char *av[])
 	phil = init(av, phil, &info);
 	if (!phil)
 		return (-1);
-	long n1 = 214356;
-	int n2 = 34;
-	print_msg(n1,n2, EATING);
-//	if (do_some(phil, &info) == -1)
-//		return (-1);
-//	if (destroy_mutex(&phil, info) == -1)
-//		return (-1);
-	clear_philos(&phil);
+	if (do_some(phil, &info) == -1)
+		return (-1);
+	if (clear_philos(&phil) == -1)
+		return (-1);
 	return (0);
 }
