@@ -33,7 +33,7 @@ void	sleeping(t_philo *phil)
 void	thinking(t_philo *phil)
 {
 	printf("%ld %d is thinking\n", get_time() - phil->start_time, phil->num);
-	ft_usleep(10000);
+	ft_usleep(100);
 	printf("%ld %d died\n", get_time()- phil->start_time, phil->num);
 //	printf("%d is sleeping\n",phil->num);
 }

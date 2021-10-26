@@ -14,7 +14,6 @@
 
 t_philo		*init(char *av[], t_philo *phil, t_info *info)
 {
-//	t_philo		*last;
 	int			i;
 	long		nb_meals;
 
@@ -32,15 +31,37 @@ t_philo		*init(char *av[], t_philo *phil, t_info *info)
 		push_back(&phil, i + 1, info, nb_meals);
 		if (!phil)
 			return (NULL);
-//		last = last_philo(phil);
-//		pthread_mutex_init(&last->right_fork, NULL);
-//		pthread_mutex_init(&last->left_fork, NULL);
-//		pthread_mutex_init(&last->text, NULL);
 		i++;
 	}
 	return (phil);
 }
 
+int			init_mutex(t_philo **phil)
+{
+	t_philo		*cpy;
+
+	cpy = *phil;
+	while (cpy)
+	{
+		cpy->right_fork = malloc(sizeof(*cpy->right_fork));
+		if (cpy->right_fork)
+			return (-1);
+		cpy->left_fork = malloc(sizeof(*cpy->left_fork));
+		if (cpy->left_fork)
+			return (-1);
+		cpy->text = malloc(sizeof(*cpy->text));
+		if (cpy->text)
+			return (-1);
+		if (pthread_mutex_init(cpy->right_fork, NULL))
+			return (-1);
+		if (pthread_mutex_init(cpy->left_fork, NULL))
+			return (-1);
+		if (pthread_mutex_init(cpy->text, NULL))
+			return (-1);
+		cpy = cpy->right;
+	}
+	return (0);
+}
 
 int			destroy_mutex(t_philo **phil, t_info info)
 {
@@ -51,13 +72,16 @@ int			destroy_mutex(t_philo **phil, t_info info)
 		*phil = (*phil)->left;
 	while (i < info.nb_of_philos)
 	{
-/*		if (pthread_mutex_destroy(&(*phil)->right_fork))
+/*		if (pthread_mutex_destroy((*phil)->right_fork))
 			return (-1);
-		if (pthread_mutex_destroy(&(*phil)->left_fork))
+		if (pthread_mutex_destroy((*phil)->left_fork))
 			return (-1);
 */
-		if (pthread_mutex_destroy(&(*phil)->text))
+		if (pthread_mutex_destroy((*phil)->text))
 			return (-1);
+//		free((*phil)->right_fork);
+//		free((*phil)->left_fork);
+		free((*phil)->text);
 		*phil = (*phil)->right;
 		i++;
 	}

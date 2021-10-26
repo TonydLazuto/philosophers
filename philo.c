@@ -49,6 +49,7 @@ void	*routine(void *phil)
 //	int		i = 0;
 
 	cpy = (t_philo *)phil;
+	cpy->start_time = get_time();
 //	while (i < 2)
 //	{
 		eating(cpy);
@@ -61,13 +62,12 @@ void	*routine(void *phil)
 
 int		do_some(t_philo *phil)
 {
-	t_philo		*cpy;
+	t_philo	*cpy;
 
 	cpy = phil;
 //	if (!cpy->right)
 //		eat_alone();
 //	phil = link_forks(phil);
-	phil->start_time = get_time();
 	while (phil)
 	{
 		if (pthread_create(&phil->pth, NULL, &routine, (void*)phil))
@@ -95,10 +95,12 @@ int		main(int ac, char *av[])
 	phil = init(av, phil, &info);
 	if (!phil)
 		return (-1);
+//	if (init_mutex(&phil) == -1)
+//		return (-1);
 	if (do_some(phil) == -1)
 		return (-1);
 //	if (destroy_mutex(&phil, info) == -1)
 //		return (-1);
 	clear_philos(&phil);
 	return (0);
-}
+} 

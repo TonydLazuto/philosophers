@@ -67,5 +67,5 @@ void	ft_usleep(long time)
 
 	start = get_time();
 	if (get_time() - start < time)
-		usleep(100);
+		usleep(300);
 }

@@ -25,6 +25,15 @@
 # include <errno.h>
 # include <ctype.h>
 
+# define COLOR_RESET   "\x1b[0m"
+# define BOLDRED "\033[1m\033[31m"
+# define BOLDGREEN "\033[1m\033[32m"
+# define BOLDYELLOW "\033[1m\033[33m"
+# define BOLDBLUE "\033[1m\033[34m"
+# define BOLDMAGENTA "\033[1m\033[35m"
+# define BOLDCYAN "\033[1m\033[36m"
+# define BOLDWHITE "\033[1m\033[37m"
+
 typedef struct s_info
 {
 	long	nb_of_philos;
@@ -39,9 +48,9 @@ typedef struct s_philo
 	t_info			*info;
 	char			*buf;
 	pthread_t		pth;
-	pthread_mutex_t	right_fork;
-	pthread_mutex_t	left_fork;
-	pthread_mutex_t	text;
+	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*text;
 	long			nb_meals;
 	long			start_time;
 	int				has_eaten;
@@ -61,6 +70,7 @@ t_philo		*last_philo(t_philo *elet);
 void		clear_philos(t_philo **lst);
 
 t_philo		*init(char *av[], t_philo *phil, t_info *info);
+int			init_mutex(t_philo **phil);
 int			destroy_mutex(t_philo **phil, t_info info);
 t_philo		*link_forks(t_philo *th);
 
