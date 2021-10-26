@@ -16,7 +16,9 @@ SRCS		=	philo.c \
 				check.c \
 				actions.c \
 				utils.c \
+				utils2.c \
 				init.c \
+				time.c \
 				lst_th.c
 
 OBJS		=	$(addprefix $(OBJ_DIR)/,$(SRCS:.c=.o))

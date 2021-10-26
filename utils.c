@@ -12,60 +12,77 @@
 
 #include "philo.h"
 
-int		ft_isdigit(int c)
+void	ft_free(char **s)
 {
-	if (c >= '0' && c <= '9')
-		return (1);
-	return (0);
+	free(*s);
+	*s = NULL;
 }
 
-long	ft_atoi(const char *str)
+char	*append_str(char *str, char *s)
 {
-	long long	nb;
+	int		i;
+	int		len;
 
-	nb = 0;
-	while (*str == '\t' || *str == ' ' || *str == '0')
-		str++;
-	while (*str)
+	len = ft_strlen(str);
+	i = 0;
+	while (s[i])
 	{
-		nb = nb * 10 + *str - '0';
-		str++;
+		str[len + i] = s[i];
+		i++;
 	}
-	return ((long)nb);
+	str[len + i] = '\0';
+	return (str);
 }
 
-int		ft_strlen(const char *s)
+char	*superjoinfree(char *s1, char *s2, char *s3)
 {
-	int	len;
+	char	*str;
+	
+	str = (char *)malloc(ft_strlen(s1) + ft_strlen(s2)
+			+ ft_strlen(s3) + 3);
+	if (!str)
+		return (NULL);
+	str[0] = '\0';
+	str = append_str(str, s1);
+	str = append_str(str, " ");
+	str = append_str(str, s2);
+	str = append_str(str, " ");
+	str = append_str(str, s3);
+	ft_free(&s1);
+	ft_free(&s2);
+	return (str);
+}
 
-	len = 0;
-	if (s)
+long	set_size(long nb)
+{
+	long	size;
+
+	size = 0;
+	while (nb)
 	{
-		while (s[len])
-			len++;
+		nb /= 10;
+		size++;
 	}
-	return (len);
+	return (size);
 }
 
-/**
- * -----------------------------------------------
- */
-
-long    get_time()
+char	*ft_itoa(long nb)
 {
-	struct timeval	tv;
-	long			milliseconds;
+	char	*s;
+	long	size;
 
-	gettimeofday(&tv, NULL);
-	milliseconds = tv.tv_sec * 1000 + tv.tv_usec / 1000;
-	return (milliseconds);
-}
-
-void	ft_usleep(long time)
-{
-	long	start;
-
-	start = get_time();
-	if (get_time() - start < time)
-		usleep(300);
+	size = set_size(nb);
+	s = (char *)malloc(size + 1);
+	if (!s)
+		return (NULL);
+	if (nb == 0)
+		s[0] = '0';
+	s[size] = '\0';
+	while (nb > 0)
+	{
+		size--;
+		s[size] = nb % 10 + '0';
+		nb /= 10;
+	}
+	return (s);
 }

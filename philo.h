@@ -34,8 +34,15 @@
 # define BOLDCYAN "\033[1m\033[36m"
 # define BOLDWHITE "\033[1m\033[37m"
 
+# define TAKEFORK "has taken a fork"
+# define EATING "is eating"
+# define SLEEPING "is sleeping"
+# define THINKING "is thinking"
+# define DIED "died"
+
 typedef struct s_info
 {
+	long	start_time;
 	long	nb_of_philos;
 	long	time_to_die;
 	long	time_to_eat;
@@ -52,7 +59,6 @@ typedef struct s_philo
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*text;
 	long			nb_meals;
-	long			start_time;
 	int				has_eaten;
 	long			last_meal;
 	struct s_philo	*left;
@@ -62,8 +68,14 @@ typedef struct s_philo
 long		ft_atoi(const char *str);
 int			ft_isdigit(int c);
 int			ft_strlen(const char *s);
-int			check_args(int ac, char *av[]);
+void		ft_free(char **s);
+char		*ft_itoa(long nb);
+void		ft_putchar(char c);
+void		ft_putendl(char *s);
+char		*superjoinfree(char *s1, char *s2, char *s3);
+void		print_msg(long timestamp, int num_philo, char *state);
 
+int			check_args(int ac, char *av[]);
 void		push_back(t_philo **list, int num,
 						t_info *info, long nb_meals);
 t_philo		*last_philo(t_philo *elet);
@@ -76,6 +88,7 @@ t_philo		*link_forks(t_philo *th);
 
 long    	get_time();
 void		ft_usleep(long time);
+long		get_current_time(long start);
 
 void		try_to_eat(t_philo *main);
 void		eating(t_philo *phil);

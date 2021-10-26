@@ -12,30 +12,6 @@
 
 #include "philo.h"
 
-t_philo		*init(char *av[], t_philo *phil, t_info *info)
-{
-	int			i;
-	long		nb_meals;
-
-	i = 0;
-	info->nb_of_philos = ft_atoi(av[1]);
-	info->time_to_die = ft_atoi(av[2]);
-	info->time_to_eat = ft_atoi(av[3]);
-	info->time_to_sleep = ft_atoi(av[4]);
-	if (av[5])
-		nb_meals = ft_atoi(av[5]);
-	else
-		nb_meals = 0;
-	while (i < info->nb_of_philos)
-	{
-		push_back(&phil, i + 1, info, nb_meals);
-		if (!phil)
-			return (NULL);
-		i++;
-	}
-	return (phil);
-}
-
 int			init_mutex(t_philo **phil)
 {
 	t_philo		*cpy;
@@ -61,6 +37,33 @@ int			init_mutex(t_philo **phil)
 		cpy = cpy->right;
 	}
 	return (0);
+}
+
+t_philo		*init(char *av[], t_philo *phil, t_info *info)
+{
+	int			i;
+	long		nb_meals;
+
+	i = 0;
+	info->nb_of_philos = ft_atoi(av[1]);
+	info->time_to_die = ft_atoi(av[2]);
+	info->time_to_eat = ft_atoi(av[3]);
+	info->time_to_sleep = ft_atoi(av[4]);
+	info->start_time = 0;
+	if (av[5])
+		nb_meals = ft_atoi(av[5]);
+	else
+		nb_meals = 0;
+	while (i < info->nb_of_philos)
+	{
+		push_back(&phil, i + 1, info, nb_meals);
+		if (!phil)
+			return (NULL);
+		i++;
+	}
+//	if (init_mutex(&phil) == -1)
+//		return (NULL);
+	return (phil);
 }
 
 int			destroy_mutex(t_philo **phil, t_info info)
