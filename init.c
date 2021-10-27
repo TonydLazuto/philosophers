@@ -59,7 +59,6 @@ t_philo		*init(char *av[], t_philo *phil, t_info *info)
 	info->time_to_die = ft_atoi(av[2]);
 	info->time_to_eat = ft_atoi(av[3]);
 	info->time_to_sleep = ft_atoi(av[4]);
-	info->start_time = 0;
 	if (av[5])
 		nb_meals = ft_atoi(av[5]);
 	else

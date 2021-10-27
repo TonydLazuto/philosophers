@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILOSOPHERS_H
-# define PHILOSOPHERS_H
+#ifndef PHILO_H
+# define PHILO_H
 
 # include <stdio.h>
 # include <unistd.h>
@@ -42,7 +42,7 @@
 
 typedef struct s_info
 {
-	long	start_time;
+//	long	start_time;
 	long	nb_of_philos;
 	long	time_to_die;
 	long	time_to_eat;
@@ -60,6 +60,7 @@ typedef struct s_philo
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*text;
 	long			nb_meals;
+	long			start_time;
 	int				starving;
 	long			last_meal;
 	int				died;
@@ -74,11 +75,11 @@ void		ft_free(char **s);
 char		*ft_itoa(long nb);
 void		ft_putstr(char *s);
 char		*superjoinfree(char *s1, char *s2, char *s3);
-void		print_msg(long timestamp, int num_philo, char *state, t_philo *phil);
+void		print_msg(long timestamp, int num_philo,
+				char *state, t_philo *phil);
 
 int			check_args(int ac, char *av[]);
-void		push_back(t_philo **list, int num,
-						t_info *info, long nb_meals);
+void		push_back(t_philo **list, int num, t_info *info, long nb_meals);
 t_philo		*last_philo(t_philo *elet);
 int			clear_philos(t_philo **lst);
 
@@ -86,7 +87,7 @@ t_philo		*init(char *av[], t_philo *phil, t_info *info);
 int			init_mutex(t_philo **phil);
 int			destroy_mutex(t_philo *phil);
 
-long    	get_time();
+long		get_time(void);
 void		ft_usleep(long time);
 long		get_current_time(long start);
 
@@ -94,7 +95,5 @@ void		wait_for_eat(t_philo *main);
 void		eating(t_philo *phil);
 void		sleeping(t_philo *main);
 void		thinking(t_philo *main);
-void		rest(t_philo *main);
-int			check_last_meal(t_philo *main);
 
-# endif
+#endif

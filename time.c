@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-long    get_time()
+long	get_time(void)
 {
 	struct timeval	tv;
 	long			milliseconds;
@@ -34,8 +34,5 @@ void	ft_usleep(long time)
 
 long	get_current_time(long start)
 {
-	long	cur;
-
-	cur = get_time() - start;
-	return (cur);
+	return (get_time() - start);
 }

@@ -38,47 +38,49 @@ void	wait_for_eat(t_philo *phil)
 	if (phil->num % 2)
 	{
 		pthread_mutex_lock(phil->left_fork);
-//		printf("%ld %d has taken the left fork\n", get_current_time(phil->info->start_time), phil->num);
-		print_msg(get_current_time(phil->info->start_time), phil->num, TAKEFORK, phil);
+//		printf("%ld %d has taken the left fork\n", get_current_time(phil->start_time), phil->num);
+		print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK, phil);
 		pthread_mutex_lock(phil->right_fork);
-//		printf("%ld %d has taken the right fork\n", get_current_time(phil->info->start_time), phil->num);
-		print_msg(get_current_time(phil->info->start_time), phil->num, TAKEFORK, phil);
+//		printf("%ld %d has taken the right fork\n", get_current_time(phil->start_time), phil->num);
+		print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK, phil);
 		eating(phil);
-		pthread_mutex_unlock(phil->right_fork);
-		pthread_mutex_unlock(phil->left_fork);
 	}
 	else
 	{
 		pthread_mutex_lock(phil->right_fork);
-//		printf("%ld %d has taken the right fork\n", get_current_time(phil->info->start_time), phil->num);
-		print_msg(get_current_time(phil->info->start_time), phil->num, TAKEFORK, phil);
+//		printf("%ld %d has taken the right fork\n", get_current_time(phil->start_time), phil->num);
+		print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK, phil);
 		pthread_mutex_lock(phil->left_fork);
-//		printf("%ld %d has taken the left fork\n", get_current_time(phil->info->start_time), phil->num);
-		print_msg(get_current_time(phil->info->start_time), phil->num, TAKEFORK, phil);
+//		printf("%ld %d has taken the left fork\n", get_current_time(phil->start_time), phil->num);
+		print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK, phil);
 		eating(phil);
-		pthread_mutex_unlock(phil->left_fork);
-		pthread_mutex_unlock(phil->right_fork);
 	}
 }
 
 void	eating(t_philo *phil)
 {	
-	phil->last_meal = get_time();
-	print_msg(get_current_time(phil->info->start_time), phil->num, EATING, phil);
+//	print_msg(get_time(), phil->num, " --> get_time\n", phil);
+//	print_msg(phil->start_time, phil->num, " --> start_time\n", phil);
+	usleep(1000);
+	phil->last_meal = get_current_time(phil->start_time);
+	print_msg(get_current_time(phil->start_time), phil->num, EATING, phil);
 	ft_usleep(phil->info->time_to_eat);
+	pthread_mutex_unlock(phil->right_fork);
+	pthread_mutex_unlock(phil->left_fork);
+	//phil->nb_meals--;
 	phil->starving = 0;
 	sleeping(phil);
 }
 
 void	sleeping(t_philo *phil)
 {
-	print_msg(get_current_time(phil->info->start_time), phil->num, SLEEPING, phil);
+	print_msg(get_current_time(phil->start_time), phil->num, SLEEPING, phil);
 	ft_usleep(phil->info->time_to_sleep);
 	thinking(phil);
 }
 
 void	thinking(t_philo *phil)
 {
-	print_msg(get_current_time(phil->info->start_time), phil->num, THINKING, phil);
-	ft_usleep(50);
+	print_msg(get_current_time(phil->start_time), phil->num, THINKING, phil);
+	usleep(100);
 }
