@@ -62,7 +62,7 @@ t_philo		*init(char *av[], t_philo *phil, t_info *info)
 	if (av[5])
 		nb_meals = ft_atoi(av[5]);
 	else
-		nb_meals = 0;
+		nb_meals = -1;
 	while (i < info->nb_of_philos)
 	{
 		push_back(&phil, i + 1, info, nb_meals);

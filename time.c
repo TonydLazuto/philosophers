@@ -28,8 +28,13 @@ void	ft_usleep(long time)
 	long	start;
 
 	start = get_time();
-	if (get_time() - start < time)
-		usleep(100);
+	while (1)
+	{
+		if (get_time() - start >= time)
+			return ;
+		usleep(500);
+	}
+	return ;
 }
 
 long	get_current_time(long start)

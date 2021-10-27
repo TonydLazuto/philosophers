@@ -21,78 +21,71 @@
 	or the beginning of the simulation, it dies
 */
 
-void	*check_death(void *phil)
+void	*check_death(void *arg)
 {
-	t_philo		*cpy;
+	t_philo		*phil;
 
-	cpy = (t_philo *)phil;
-	ft_usleep(cpy->info->time_to_eat + 1);
+	phil = (t_philo *)arg;
+	ft_usleep(phil->info->time_to_eat + 1);
 	while (1)
 	{
-		if (!cpy->last_meal)
-			cpy->last_meal = cpy->start_time;
-		if (get_current_time(cpy->start_time) - cpy->last_meal
-				>= cpy->info->time_to_die)
+		if (!phil->last_meal)
+			phil->last_meal = phil->start_time;
+		if (get_current_time(phil->start_time) - phil->last_meal
+				>= phil->info->time_to_die)
 		{
-			cpy->died = 1;
-			print_msg(get_current_time(cpy->start_time), cpy->num, DIED, cpy);
-		//	printf("%ld %d died\n", get_time()- cpy->start_time, cpy->num);
+			phil->died = 1;
+			print_msg(get_current_time(phil->start_time), phil->num, DIED, phil);
 			break ;
 		}
-//		if (get_current_time(cpy->start_time) - cpy->last_meal > cpy->info->time_to_die / 2)
-//			cpy->starving = 1;
+		if (phil->nb_meals == 0)
+			;
+//		if (get_current_time(phil->start_time) - phil->last_meal > phil->info->time_to_die / 2)
+//			phil->starving = 1;
 		ft_usleep(50);
 	}
 	return (NULL);
 }
 
-void	*routine(void *phil)
+void	eat_alone(t_philo *phil)
 {
-	t_philo	*cpy;
+	pthread_mutex_lock(phil->right_fork);
+	print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK, phil);
+	print_msg(get_current_time(phil->start_time), phil->num, EATING, phil);
+	while (1)
+		ft_usleep(phil->info->time_to_die + 10);
+	pthread_mutex_unlock(phil->right_fork);
+}
 
-	cpy = (t_philo *)phil;
+void	*routine(void *arg)
+{
+	t_philo	*phil;
+
+	phil = (t_philo *)arg;
 	int i = 0;
-//	try_to_eat(cpy);
-	while (cpy->died == 0 && i < 4)
+	while (phil->died)
+		usleep(50);
+	phil->start_time = get_time();
+	phil->last_meal = 0;
+	if (!phil->right && !phil->left)
+		eat_alone(phil);
+	while (1)
 	{
-		//if (cpy->nb_meals > 0)
-
-//		print_msg(get_current_time(cpy->start_time), cpy->num, " --> get_current_time\n", cpy);
-		print_msg(cpy->last_meal, cpy->num, " ------> last_meal\n", cpy);
-		wait_for_eat(cpy);
+//		print_msg(get_current_time(phil->start_time), phil->num, " --> get_current_time\n", phil);
+//		print_msg(phil->last_meal, phil->num, " ------> last_meal\n", phil);
+		wait_for_eat(phil);
 		i++;
 	}
-
 	return (NULL);
 }
 
-int		detach_deaths_thread(t_philo **phil)
+int		launch_threads(t_philo *phil)
 {
 	t_philo		*cpy;
-
-	cpy = *phil;
-	while (cpy)
-	{
-		if (pthread_detach(cpy->death))
-			return (-1);
-		cpy = cpy->right;
-	}
-	return (0);
-}
-
-int		do_some(t_philo *phil)
-{
-	t_philo		*cpy;
-	t_philo		*cpy2;
 
 	cpy = phil;
-	cpy2 = phil;
-//	if (!cpy->right)
-//		eat_alone();
 	while (phil)
 	{
-		phil->start_time = get_time();
-		phil->last_meal = 0;
 		if (pthread_create(&phil->pth, NULL, &routine, (void*)phil))
 			return (-1);
 		if (pthread_create(&phil->death, NULL, &check_death, (void*)phil))
@@ -101,12 +94,12 @@ int		do_some(t_philo *phil)
 	}
 	while (cpy)
 	{
+		if (pthread_detach(cpy->death))
+			return (-1);
 		if (pthread_join(cpy->pth, NULL))
 			return (-1);
-		cpy = cpy->right;
+		cpy = phil->right;
 	}
-	if (detach_deaths_thread(&cpy2) == -1)
-			return (-1);
 	return (0);
 }
 
@@ -121,7 +114,7 @@ int		main(int ac, char *av[])
 	phil = init(av, phil, &info);
 	if (!phil)
 		return (-1);
-	if (do_some(phil) == -1)
+	if (launch_threads(phil) == -1)
 		return (-1);
 	if (clear_philos(&phil) == -1)
 		return (-1);
