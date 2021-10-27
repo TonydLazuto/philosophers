@@ -57,6 +57,8 @@ long	set_size(long nb)
 	long	size;
 
 	size = 0;
+	if (nb == 0)
+		return (1);
 	while (nb)
 	{
 		nb /= 10;

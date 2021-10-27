@@ -35,10 +35,8 @@ void	*check_death(void *phil)
 				>= cpy->info->time_to_die)
 		{
 			cpy->died = 1;
-//			pthread_mutex_lock(cpy->text);
 			print_msg(get_current_time(cpy->info->start_time), cpy->num, DIED, cpy);
 		//	printf("%ld %d died\n", get_time()- cpy->info->start_time, cpy->num);
-//			pthread_mutex_unlock(cpy->text);
 			break ;
 		}
 //		if (get_current_time(cpy->info->start_time) - cpy->last_meal > cpy->info->time_to_die / 2)
@@ -59,7 +57,7 @@ void	*routine(void *phil)
 //		return (NULL);
 	while (i < 5)
 	{
-		try_to_eat(cpy);
+		wait_for_eat(cpy);
 		i++;
 	}
 //	if (pthread_detach(cpy->death))

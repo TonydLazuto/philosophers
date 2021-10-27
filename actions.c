@@ -33,10 +33,8 @@ void	print_msg(long timestamp, int num_philo, char *state, t_philo *phil)
 	ft_free(&msg);
 }
 
-void	try_to_eat(t_philo *phil)
+void	wait_for_eat(t_philo *phil)
 {
-//	if (phil->has_eaten)
-//		phil->start_time = get_time(phil->start_time);
 	if (phil->num % 2)
 	{
 		pthread_mutex_lock(phil->left_fork);
@@ -66,29 +64,21 @@ void	try_to_eat(t_philo *phil)
 void	eating(t_philo *phil)
 {	
 	phil->last_meal = get_time();
-//	pthread_mutex_lock(phil->text);
 	print_msg(get_current_time(phil->info->start_time), phil->num, EATING, phil);
-//	printf("%ld %d is eating\n", get_current_time(phil->info->start_time), phil->num);
 	ft_usleep(phil->info->time_to_eat);
 	phil->starving = 0;
-//	pthread_mutex_unlock(phil->text);
 	sleeping(phil);
 }
 
 void	sleeping(t_philo *phil)
 {
-//	pthread_mutex_lock(phil->text);
 	print_msg(get_current_time(phil->info->start_time), phil->num, SLEEPING, phil);
-//	printf("%ld %d is sleeping\n", get_current_time(phil->info->start_time), phil->num);
 	ft_usleep(phil->info->time_to_sleep);
-//	pthread_mutex_unlock(phil->text);
 	thinking(phil);
 }
 
 void	thinking(t_philo *phil)
 {
-//	pthread_mutex_lock(phil->text);
 	print_msg(get_current_time(phil->info->start_time), phil->num, THINKING, phil);
-//	pthread_mutex_unlock(phil->text);
-	//printf("%ld %d is thinking\n", get_current_time(phil->info->start_time), phil->num);
+	ft_usleep(50);
 }

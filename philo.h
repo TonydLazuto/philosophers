@@ -90,17 +90,11 @@ long    	get_time();
 void		ft_usleep(long time);
 long		get_current_time(long start);
 
-void		try_to_eat(t_philo *main);
+void		wait_for_eat(t_philo *main);
 void		eating(t_philo *phil);
 void		sleeping(t_philo *main);
 void		thinking(t_philo *main);
 void		rest(t_philo *main);
 int			check_last_meal(t_philo *main);
-
-void  red();
-void  blue();
-void  green();
-void  yellow();
-void  reset();
 
 # endif
