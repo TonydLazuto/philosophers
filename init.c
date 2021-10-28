@@ -27,32 +27,26 @@ void		link_left_fork(t_philo **phil)
 	}
 }
 
-int			init_mutex(t_philo **phil)
+t_philo		*init_mutex(t_philo *phil)
 {
 	t_philo		*cpy;
 
-	cpy = *phil;
+	cpy = phil;
 	while (cpy)
 	{
 		cpy->right_fork = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
 		if (!cpy->right_fork)
-			return (-1);
-		cpy->text = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
-		if (!cpy->text)
-			return (-1);
+			return (NULL);
 		if (pthread_mutex_init(cpy->right_fork, NULL))
-			return (-1);
-		if (pthread_mutex_init(cpy->text, NULL))
-			return (-1);
+			return (NULL);
 		cpy = cpy->right;
 	}
-	return (0);
+	return (phil);
 }
 
 t_philo		*init(char *av[], t_philo *phil, t_info *info)
 {
 	int			i;
-	long		nb_meals;
 
 	i = 0;
 	info->nb_of_philos = ft_atoi(av[1]);
@@ -60,31 +54,29 @@ t_philo		*init(char *av[], t_philo *phil, t_info *info)
 	info->time_to_eat = ft_atoi(av[3]);
 	info->time_to_sleep = ft_atoi(av[4]);
 	if (av[5])
-		nb_meals = ft_atoi(av[5]);
+		info->nb_meals_to_eat = ft_atoi(av[5]);
 	else
-		nb_meals = -1;
+		info->nb_meals_to_eat = 0;
+	info->someone_died = 0;
 	while (i < info->nb_of_philos)
 	{
-		push_back(&phil, i + 1, info, nb_meals);
+		push_back(&phil, i + 1, info);
 		if (!phil)
 			return (NULL);
 		i++;
 	}
-	if (init_mutex(&phil) == -1)
+	phil = init_mutex(phil);
+	if (!phil)
 		return (NULL);
-	link_left_fork(&phil);
+	if (phil->right)
+		link_left_fork(&phil);
 	return (phil);
 }
 
-int			destroy_mutex(t_philo *phil)
+t_philo		*destroy_mutex(t_philo *phil)
 {
+	pthread_mutex_unlock(phil->right_fork);
 	if (pthread_mutex_destroy(phil->right_fork))
-		return (-1);
-	if (pthread_mutex_destroy(phil->text))
-		return (-1);
-	if (phil->right_fork)
-		free(phil->right_fork);
-	if (phil->text)
-		free(phil->text);
-	return (0);
+		return (NULL);
+	return (phil);
 }

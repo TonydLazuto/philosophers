@@ -53,3 +53,25 @@ void	ft_putstr(char *s)
 		return ;
 	write(1, s, ft_strlen(s));
 }
+
+void	print_msg(long timestamp, int num_philo, char *state)//, t_philo *phil)
+{
+	char	*time;
+	char	*num_phil;
+	pthread_mutex_t	locked;
+
+	num_phil = NULL;
+	if (pthread_mutex_init(&locked, NULL))
+		return ;
+	time = ft_itoa(timestamp);
+	if (!time)
+		return ;
+	num_phil = ft_itoa((long)num_philo);
+	if (!num_phil)
+		return ;
+	pthread_mutex_lock(&locked);
+	superjoinfree(time, num_phil, state);	
+	pthread_mutex_unlock(&locked);
+	if (pthread_mutex_destroy(&locked))
+		return ;
+}

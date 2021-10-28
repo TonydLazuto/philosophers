@@ -34,14 +34,14 @@ char	*append_str(char *str, char *s)
 	return (str);
 }
 
-char	*superjoinfree(char *s1, char *s2, char *s3)
+void	superjoinfree(char *s1, char *s2, char *s3)
 {
 	char	*str;
 	
 	str = (char *)malloc(ft_strlen(s1) + ft_strlen(s2)
-			+ ft_strlen(s3) + 3);
+			+ ft_strlen(s3) + 2);
 	if (!str)
-		return (NULL);
+		return ;
 	str[0] = '\0';
 	str = append_str(str, s1);
 	str = append_str(str, " ");
@@ -49,7 +49,8 @@ char	*superjoinfree(char *s1, char *s2, char *s3)
 	str = append_str(str, s3);
 	ft_free(&s1);
 	ft_free(&s2);
-	return (str);
+	ft_putstr(str);
+	ft_free(&str);
 }
 
 long	set_size(long nb)

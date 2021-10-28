@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-t_philo	*new_philo(int num, t_info *info, long nb_meals)
+t_philo	*new_philo(int num, t_info *info)
 {
 	t_philo	*elet;
 
@@ -20,12 +20,11 @@ t_philo	*new_philo(int num, t_info *info, long nb_meals)
 	if (!elet)
 		return (NULL);
 	elet->num = num;
-	elet->nb_meals = nb_meals;
+	elet->nb_meals_eaten = 0;
 	elet->info = info;
+	elet->died = 0;
 	elet->starving = 0;
 	elet->last_meal = 0;
-	elet->buf = NULL;
-	elet->died = 0;
 	elet->right = NULL;
 	elet->left = NULL;
 	return (elet);
@@ -40,55 +39,58 @@ t_philo	*last_philo(t_philo *elet)
 	return (elet);
 }
 
-void	push_back(t_philo **list, int num,
-						t_info *info, long nb_meals)
+void	push_back(t_philo **phil, int num, t_info *info)
 {
 	t_philo	*elet;
 	t_philo	*tmp;
 
 	tmp = NULL;
-	elet = new_philo(num, info, nb_meals);
+	elet = new_philo(num, info);
 	if (!elet)
 		return ;
-	if (!*list)
+	if (!*phil)
 	{
-		*list = elet;
+		*phil = elet;
 		return ;
 	}
-	tmp = last_philo(*list);
+	tmp = last_philo(*phil);
 	elet->left = tmp;
 	tmp->right = elet;
 }
 
-t_philo	*pop_front(t_philo *list)
+t_philo	*pop_front(t_philo *phil)
 {
 	t_philo	*first;
 
-	first = list;
-	if (!list)
+	first = phil;
+	if (!phil)
 		return (NULL);
-	list = list->right;
+	phil = phil->right;
+	free(first);
 	first->right = NULL;
 	first->left = NULL;
-	if (list)
-		list->left = NULL;
-	free(first);
 	first = NULL;
-	return (list);
+	if (phil)
+		phil->left = NULL;
+	return (phil);
 }
 
-int		clear_philos(t_philo **lst)
+int		clear_philos(t_philo **phil)
 {
-	if ((*lst)->left)
+	if ((*phil)->left)
 	{
-		while ((*lst)->left)
-			*lst = (*lst)->left;
+		while ((*phil)->left)
+			*phil = (*phil)->left;
 	}
-	while (*lst)
+	while (*phil)
 	{
-		if (destroy_mutex(*lst) == -1)
+		*phil = destroy_mutex(*phil);
+		free((*phil)->right_fork);
+		(*phil)->right_fork = NULL;
+		(*phil)->info = NULL;
+		if (!*phil)
 			return (-1);
-		*lst = pop_front(*lst);
+		*phil = pop_front(*phil);
 	}
 	return (0);
 }

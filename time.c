@@ -32,7 +32,7 @@ void	ft_usleep(long time)
 	{
 		if (get_time() - start >= time)
 			return ;
-		usleep(500);
+		usleep(100);
 	}
 	return ;
 }

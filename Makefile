@@ -17,6 +17,7 @@ SRCS		=	philo.c \
 				actions.c \
 				utils.c \
 				utils2.c \
+				routines.c \
 				init.c \
 				time.c \
 				lst_th.c
