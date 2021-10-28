@@ -42,7 +42,7 @@ void	*check_death(void *arg)
 			;
 //		if (get_current_time(phil->start_time) - phil->last_meal > phil->info->time_to_die / 2)
 //			phil->starving = 1;
-		ft_usleep(50);
+		ft_usleep(1000);
 	}
 	return (NULL);
 }
@@ -63,6 +63,10 @@ void	*routine(void *arg)
 
 	phil = (t_philo *)arg;
 	int i = 0;
+	if (pthread_create(&phil->death, NULL, &check_death, (void*)phil))
+		return (NULL);
+	if (pthread_detach(phil->death))
+		return (NULL);
 	while (phil->died)
 		usleep(50);
 	phil->start_time = get_time();
@@ -88,14 +92,14 @@ int		launch_threads(t_philo *phil)
 	{
 		if (pthread_create(&phil->pth, NULL, &routine, (void*)phil))
 			return (-1);
-		if (pthread_create(&phil->death, NULL, &check_death, (void*)phil))
-			return (-1);
+//		if (pthread_create(&phil->death, NULL, &check_death, (void*)phil))
+//			return (-1);
 		phil = phil->right;
 	}
 	while (cpy)
 	{
-		if (pthread_detach(cpy->death))
-			return (-1);
+//		if (pthread_detach(cpy->death))
+//			return (-1);
 		if (pthread_join(cpy->pth, NULL))
 			return (-1);
 		cpy = phil->right;
