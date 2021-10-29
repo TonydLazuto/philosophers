@@ -54,14 +54,13 @@ void	ft_putstr(char *s)
 	write(1, s, ft_strlen(s));
 }
 
-void	print_msg(long timestamp, int num_philo, char *state, t_philo *phil)
+void	print_msg(long timestamp, int num_philo, char *state)//, t_philo *phil)
 {
 	char	*time;
 	char	*num_phil;
 
 	num_phil = NULL;
 	time = NULL;
-	pthread_mutex_lock(phil->text);
 	time = ft_itoa(timestamp);
 	if (!time)
 		return ;
@@ -69,5 +68,4 @@ void	print_msg(long timestamp, int num_philo, char *state, t_philo *phil)
 	if (!num_phil)
 		return ;
 	superprint(time, num_phil, state);	
-	pthread_mutex_unlock(phil->text);
 }

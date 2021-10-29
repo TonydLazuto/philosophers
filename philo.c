@@ -15,24 +15,63 @@
 void	eat_alone(t_philo *phil)
 {
 	pthread_mutex_lock(phil->right_fork);
-	print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK, phil);
+	print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK);
 	pthread_mutex_unlock(phil->right_fork);
 }
 
-int		launch_threads(t_philo *phil)
+void    *observe(void *arg)
 {
-	t_philo		*cpy;
+	t_philo		*phil;
+	t_philo		*start;
 
-	cpy = phil;
+	phil = (t_philo *)arg;
+	start = phil;
 	while (phil)
 	{
-		if (pthread_create(&phil->pth, NULL, &routine, (void*)phil))
+		usleep(100);
+		if (phil->died)
+		{
+			break ;
+			printf("Merde ils ont tues kenny espece d'en****\n");
+		}
+		phil = phil->right;
+		if (!phil)
+			phil = start;
+	}
+	
+//	if (clear_philos(&phil) == -1)
+//		return (NULL);
+	return (NULL);
+}
+
+int		launch_observer(t_philo *phil)
+{
+	pthread_t watch;
+
+	if (pthread_create(&watch, NULL, &observe, (void*)phil))
+		return (-1);
+	if (pthread_detach(watch))
+		return (-1);
+	return (0);
+}
+
+int		launch_threads(t_philo *phil)//, t_info *info)
+{
+	t_philo		*cpy;
+	pthread_t	th;
+
+	cpy = phil;
+	if (launch_observer(phil) == -1)
+		return (-1);
+	while (phil)
+	{
+		if (pthread_create(&th, NULL, &routine, (void*)phil))
 			return (-1);
 		phil = phil->right;
 	}
 	while (cpy)
 	{
-		if (pthread_join(cpy->pth, NULL))
+		if (pthread_join(th, NULL))
 			return (-1);
 		cpy = cpy->right;
 	}

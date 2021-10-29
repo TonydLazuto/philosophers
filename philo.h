@@ -42,28 +42,23 @@
 
 typedef struct s_info
 {
-	long	nb_of_philos;
-	long	time_to_die;
-	long	time_to_eat;
-	long	time_to_sleep;
-	long	nb_meals_to_eat;
-	int		someone_died;
+	long			nb_of_philos;
+	long			time_to_die;
+	long			time_to_eat;
+	long			time_to_sleep;
+	long			nb_meals_to_eat;
+//	pthread_mutex_t	*end;
 }				t_info;
 
 typedef struct s_philo
 {
 	int				num;
 	t_info			*info;
-	pthread_t		pth;
-	pthread_t		watch;
-	pthread_t		death;
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*text;
 	int				died;
 	long			nb_meals_eaten;
 	long			start_time;
-	int				starving;
 	long			last_meal;
 	struct s_philo	*left;
 	struct s_philo	*right;
@@ -77,7 +72,7 @@ char		*ft_itoa(long nb);
 void		ft_putstr(char *s);
 void		superprint(char *time, char *num_phil, char *state);
 void		print_msg(long timestamp, int num_philo,
-				char *state, t_philo *phil);
+				char *state);//, t_philo *phil);
 
 int			check_args(int ac, char *av[]);
 void		push_back(t_philo **phil, int num, t_info *info);
@@ -95,10 +90,11 @@ void		*death_routine(void *arg);
 void		*routine(void *arg);
 void		*observe(void *arg);
 
-void		wait_for_eat(t_philo *main);
+void		wait_for_eat(t_philo *main, pthread_mutex_t	*status);
+void		eating(t_philo *phil, pthread_mutex_t	*status);
+void		sleeping(t_philo *main, pthread_mutex_t	*status);
+void		thinking(t_philo *main, pthread_mutex_t	*status);
+//int		check_death(t_philo **phil, pthread_mutex_t *r_fork, pthread_mutex_t *l_fork);
 void		eat_alone(t_philo *phil);
-void		eating(t_philo *phil);
-void		sleeping(t_philo *main);
-void		thinking(t_philo *main);
 
 #endif

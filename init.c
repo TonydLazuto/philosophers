@@ -39,9 +39,6 @@ t_philo		*init_fork_mutexes(t_philo *phil)
 			return (NULL);
 		if (pthread_mutex_init(cpy->right_fork, NULL))
 			return (NULL);
-		cpy->text = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
-		if (pthread_mutex_init(cpy->text, NULL))
-			return (NULL);
 		cpy = cpy->right;
 	}
 	return (phil);
@@ -57,7 +54,6 @@ t_info		*init_info(char *av[], t_info *info)
 		info->nb_meals_to_eat = ft_atoi(av[5]);
 	else
 		info->nb_meals_to_eat = 0;
-	info->someone_died = 0;
 	return (info);
 }
 

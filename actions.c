@@ -11,83 +11,82 @@
 /* ************************************************************************** */
 
 #include "philo.h"
-
-int		check_death(t_philo *phil, pthread_mutex_t *r_fork,
-			pthread_mutex_t * l_fork)
+/*
+int		check_death(t_philo **phil, pthread_mutex_t *r_fork,
+			pthread_mutex_t *l_fork)
 {
-	ft_usleep(0.05);
-	if (phil->info->someone_died)
+	ft_usleep(0.005);
+	if ((*phil)->info->someone_died)
 	{
 		if (r_fork)
-			pthread_mutex_unlock(phil->right_fork);
+		{
+			pthread_mutex_unlock((*phil)->right_fork);
+			(*phil)->right_fork = NULL;
+
+		}
 		if (l_fork)
-			pthread_mutex_unlock(phil->left_fork);
+		{
+			pthread_mutex_unlock((*phil)->left_fork);
+			(*phil)->left_fork = NULL;
+		}
 		return (1);
 	}
 	return (0);
 }
-
-void	wait_for_eat(t_philo *phil)
+*/
+void	wait_for_eat(t_philo *phil, pthread_mutex_t	*status)
 {
 	if (phil->num % 2)
 	{
-		pthread_mutex_lock(phil->left_fork);
-		if (check_death(phil, NULL, phil->left_fork))
-			return ;
-		print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK, phil);
+		pthread_mutex_lock(status);
+		pthread_mutex_lock(status);
+		print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK);
+		pthread_mutex_unlock(status);
 		pthread_mutex_lock(phil->right_fork);
-		if (check_death(phil, phil->right_fork, phil->left_fork))
-			return ;
-		print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK, phil);
-		eating(phil);
+		pthread_mutex_lock(status);
+		print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK);
+		pthread_mutex_unlock(status);
 	}
 	else
 	{
 		pthread_mutex_lock(phil->right_fork);
-		if (check_death(phil, phil->right_fork, NULL))
-			return ;
-		print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK, phil);
+		pthread_mutex_lock(status);
+		print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK);
+		pthread_mutex_unlock(status);
 		pthread_mutex_lock(phil->left_fork);
-		if (check_death(phil, phil->right_fork, phil->left_fork))
-			return ;
-		print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK, phil);
-		eating(phil);
+		pthread_mutex_lock(status);
+		print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK);
+		pthread_mutex_unlock(status);
 	}
 }
 
-void	eating(t_philo *phil)
+void	eating(t_philo *phil, pthread_mutex_t *status)
 {	
 //	print_msg(get_current_time(phil->start_time), phil->num, " --> get_current_time()\n", phil);
 //	print_msg(phil->info->time_to_eat, phil->num, " --> time_to_eat\n", phil);
-	ft_usleep(0.05);
 	phil->last_meal = get_current_time(phil->start_time);
-	print_msg(get_current_time(phil->start_time), phil->num, EATING, phil);
-
-	while (get_current_time(phil->start_time) - phil->last_meal < phil->info->time_to_eat)
-	{
-		if (check_death(phil, phil->right_fork, phil->left_fork))
-			return ;
-	}
+	pthread_mutex_lock(status);
+	print_msg(get_current_time(phil->start_time), phil->num, EATING);
+	pthread_mutex_unlock(status);
+	ft_usleep(phil->info->time_to_eat);
 	pthread_mutex_unlock(phil->right_fork);
 	pthread_mutex_unlock(phil->left_fork);
 //	phil->nb_meals--;
 //	phil->starving = 0;
 }
 
-void	sleeping(t_philo *phil)
+void	sleeping(t_philo *phil, pthread_mutex_t *status)
 {
-	print_msg(get_current_time(phil->start_time), phil->num, SLEEPING, phil);
-	while (get_current_time(phil->start_time) - phil->last_meal
-		+ phil->info->time_to_eat < phil->info->time_to_sleep)
-	{
-		if (check_death(phil, NULL, NULL))
-			return ;
-		ft_usleep(0.05);
-	}
+	pthread_mutex_lock(status);
+	print_msg(get_current_time(phil->start_time), phil->num, SLEEPING);
+	pthread_mutex_unlock(status);
+	ft_usleep(phil->info->time_to_sleep);
 }
 
-void	thinking(t_philo *phil)
+void	thinking(t_philo *phil, pthread_mutex_t *status)
 {
-	print_msg(get_current_time(phil->start_time), phil->num, THINKING, phil);
+	pthread_mutex_lock(status);
+	print_msg(get_current_time(phil->start_time), phil->num, THINKING);
+	pthread_mutex_unlock(status);
 	ft_usleep(0.05);
 }
