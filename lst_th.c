@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-t_philo	*new_philo(int num, t_info *info)
+t_philo		*new_philo(int num, t_info *info)
 {
 	t_philo	*elet;
 
@@ -25,12 +25,14 @@ t_philo	*new_philo(int num, t_info *info)
 	elet->died = 0;
 	elet->starving = 0;
 	elet->last_meal = 0;
+	elet->right_fork = NULL;
+	elet->left_fork = NULL;
 	elet->right = NULL;
 	elet->left = NULL;
 	return (elet);
 }
 
-t_philo	*last_philo(t_philo *elet)
+t_philo		*last_philo(t_philo *elet)
 {
 	if (!elet)
 		return (NULL);
@@ -39,7 +41,7 @@ t_philo	*last_philo(t_philo *elet)
 	return (elet);
 }
 
-void	push_back(t_philo **phil, int num, t_info *info)
+void		push_back(t_philo **phil, int num, t_info *info)
 {
 	t_philo	*elet;
 	t_philo	*tmp;
@@ -57,8 +59,8 @@ void	push_back(t_philo **phil, int num, t_info *info)
 	elet->left = tmp;
 	tmp->right = elet;
 }
-
-t_philo	*pop_front(t_philo *phil)
+/*
+t_philo		*pop_front(t_philo *phil)
 {
 	t_philo	*first;
 
@@ -75,22 +77,29 @@ t_philo	*pop_front(t_philo *phil)
 	return (phil);
 }
 
-int		clear_philos(t_philo **phil)
+int			clear_philos(t_philo **phil)
 {
 	if ((*phil)->left)
 	{
 		while ((*phil)->left)
+		{
+			printf("phil num : %d\n", (*phil)->num);
 			*phil = (*phil)->left;
+		}
 	}
 	while (*phil)
 	{
+		printf("phil num : %d\n", (*phil)->num);
 		*phil = destroy_mutex(*phil);
 		free((*phil)->right_fork);
 		(*phil)->right_fork = NULL;
 		(*phil)->info = NULL;
 		if (!*phil)
 			return (-1);
+		*phil = (*phil)->right;
 		*phil = pop_front(*phil);
 	}
+
 	return (0);
 }
+*/

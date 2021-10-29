@@ -20,14 +20,14 @@ void	*death_routine(void *arg)
 	ft_usleep(phil->info->time_to_eat + 1);
 	while (1)
 	{
-		usleep(500);
+		ft_usleep(0.05);
 		if (!phil->last_meal)
 			phil->last_meal = phil->start_time;
 		if (get_current_time(phil->start_time) - phil->last_meal
 				>= phil->info->time_to_die)
 		{
 			phil->info->someone_died = 1;
-			print_msg(get_current_time(phil->start_time), phil->num, DIED);
+			print_msg(get_current_time(phil->start_time), phil->num, DIED, phil);
 			return (NULL);
 		}
 //		if (phil->nb_meals == 0)
@@ -41,11 +41,8 @@ void	*death_routine(void *arg)
 void	*routine(void *arg)
 {
 	t_philo			*phil;
-//	pthread_mutex_t	final;
 
 	phil = (t_philo *)arg;
-//	if (pthread_mutex_init(&final, NULL))
-//		return (NULL);
 	phil->start_time = get_time();
 	phil->last_meal = 0;
 	if (pthread_create(&phil->death, NULL, &death_routine, (void*)phil))
@@ -57,7 +54,6 @@ void	*routine(void *arg)
 		eat_alone(phil);
 		return (NULL);
 	}
-/*
 	while (!phil->info->someone_died)
 	{
 //		print_msg(get_current_time(phil->start_time), phil->num, " --> get_current_time\n", phil);
@@ -66,17 +62,7 @@ void	*routine(void *arg)
 		sleeping(phil);
 		thinking(phil);
 	}
-*/
 //	while (phil->info->someone_died)
 //		usleep(50);
-/*
-	pthread_mutex_lock(&final);
-	phil = destroy_mutex(phil);
-	if (!phil)
-		return (NULL);
-	pthread_mutex_unlock(&final);
-	if (pthread_mutex_destroy(&final))
-		return (NULL);
-*/
 	return (NULL);
 }

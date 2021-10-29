@@ -59,6 +59,7 @@ typedef struct s_philo
 	pthread_t		death;
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*text;
 	int				died;
 	long			nb_meals_eaten;
 	long			start_time;
@@ -74,9 +75,9 @@ int			ft_strlen(const char *s);
 void		ft_free(char **s);
 char		*ft_itoa(long nb);
 void		ft_putstr(char *s);
-void		superjoinfree(char *s1, char *s2, char *s3);
+void		superprint(char *time, char *num_phil, char *state);
 void		print_msg(long timestamp, int num_philo,
-				char *state);//, t_philo *phil);
+				char *state, t_philo *phil);
 
 int			check_args(int ac, char *av[]);
 void		push_back(t_philo **phil, int num, t_info *info);

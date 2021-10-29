@@ -12,27 +12,11 @@
 
 #include "philo.h"
 
-void	*observe(void *arg)
+void	eat_alone(t_philo *phil)
 {
-	t_philo			*phil;
-
-	phil = (t_philo *)arg;
-	while (!phil->info->someone_died)
-		usleep(100);
-	printf("ENNNND\n");
-	if (clear_philos(&phil) == -1)
-		return (NULL);
-	printf("ENNNND\n");
-	return (NULL);
-}
-
-int		launch_observer(t_philo *phil)
-{
-	if (pthread_create(&phil->watch, NULL, &observe, (void*)phil))
-		return (-1);
-	if (pthread_detach(phil->watch))
-		return (-1);
-	return (0);
+	pthread_mutex_lock(phil->right_fork);
+	print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK, phil);
+	pthread_mutex_unlock(phil->right_fork);
 }
 
 int		launch_threads(t_philo *phil)
@@ -40,8 +24,6 @@ int		launch_threads(t_philo *phil)
 	t_philo		*cpy;
 
 	cpy = phil;
-	if (launch_observer(phil) == -1)
-		return (-1);
 	while (phil)
 	{
 		if (pthread_create(&phil->pth, NULL, &routine, (void*)phil))
@@ -70,7 +52,7 @@ int		main(int ac, char *av[])
 		return (-1);
 	if (launch_threads(phil) == -1)
 		return (-1);
-	if (clear_philos(&phil) == -1)
-		return (-1);
+//	if (clear_philos(&phil) == -1)
+//		return (-1);
 	return (0);
 }

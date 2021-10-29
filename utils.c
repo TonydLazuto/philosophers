@@ -34,23 +34,23 @@ char	*append_str(char *str, char *s)
 	return (str);
 }
 
-void	superjoinfree(char *s1, char *s2, char *s3)
+void	superprint(char *time, char *num_phil, char *state)
 {
-	char	*str;
+	char	*statut;
 	
-	str = (char *)malloc(ft_strlen(s1) + ft_strlen(s2)
-			+ ft_strlen(s3) + 2);
-	if (!str)
+	statut = (char *)malloc(ft_strlen(time) + ft_strlen(num_phil)
+			+ ft_strlen(state) + 2);
+	if (!statut)
 		return ;
-	str[0] = '\0';
-	str = append_str(str, s1);
-	str = append_str(str, " ");
-	str = append_str(str, s2);
-	str = append_str(str, s3);
-	ft_free(&s1);
-	ft_free(&s2);
-	ft_putstr(str);
-	ft_free(&str);
+	statut[0] = '\0';
+	statut = append_str(statut, time);
+	statut = append_str(statut, " ");
+	statut = append_str(statut, num_phil);
+	statut = append_str(statut, state);
+	ft_free(&time);
+	ft_free(&num_phil);
+	ft_putstr(statut);
+	ft_free(&statut);
 }
 
 long	set_size(long nb)
