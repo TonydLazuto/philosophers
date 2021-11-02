@@ -27,7 +27,7 @@ void	*death_routine(void *arg)
 			print_msg(phil, DIED);
 			pthread_mutex_unlock(phil->info->status);
 			printf("Gone from if death routine\n");
-			pthread_mutex_unlock(phil->info->end);
+//			pthread_mutex_unlock(phil->info->end);
 			return (NULL);
 		}
 	}
@@ -38,16 +38,17 @@ void	*death_routine(void *arg)
 void	*routine(void *arg)
 {
 	t_philo				*phil;
-	pthread_t			death;
+//	pthread_t			death;
 
 	phil = (t_philo *)arg;
 	phil->last_meal = 0;
-	if (pthread_create(&death, NULL, &death_routine, arg))
-	 	return (NULL);
-	if (pthread_detach(death))
-	 	return (NULL);
+	// if (pthread_create(&death, NULL, &death_routine, arg))
+	//  	return (NULL);
+	// if (pthread_detach(death))
+	//  	return (NULL);
 
-	while (!phil->info->died && phil->nb_meals_eaten < phil->info->nb_meals_to_eat)
+//	while (!phil->info->died && phil->nb_meals_eaten < phil->info->nb_meals_to_eat)
+	while (1)
 	{
 		wait_for_eat(phil);
 		eating(phil);
