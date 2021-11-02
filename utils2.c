@@ -54,18 +54,21 @@ void	ft_putstr(char *s)
 	write(1, s, ft_strlen(s));
 }
 
-void	print_msg(long timestamp, int num_philo, char *state)//, t_philo *phil)
+void	print_msg(t_philo *phil, char *state)
 {
 	char	*time;
 	char	*num_phil;
+	int		timestamp;
 
 	num_phil = NULL;
 	time = NULL;
+	timestamp = get_current_time(phil->info->start_time);
 	time = ft_itoa(timestamp);
 	if (!time)
 		return ;
-	num_phil = ft_itoa((long)num_philo);
+	num_phil = ft_itoa((long)phil->num);
 	if (!num_phil)
 		return ;
-	superprint(time, num_phil, state);	
+	if (!phil->info->died)
+		superprint(time, num_phil, state);	
 }

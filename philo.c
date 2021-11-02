@@ -12,73 +12,42 @@
 
 #include "philo.h"
 
-void	eat_alone(t_philo *phil)
+void	*observe(void *arg)
 {
-	pthread_mutex_lock(phil->right_fork);
-	print_msg(get_current_time(phil->start_time), phil->num, TAKEFORK);
-	pthread_mutex_unlock(phil->right_fork);
-}
+	t_info		*info;
 
-void    *observe(void *arg)
-{
-	t_philo		*phil;
-	t_philo		*start;
-
-	phil = (t_philo *)arg;
-	start = phil;
-	while (phil)
-	{
+	info = (t_info *)arg;
+	while (!info->died && info->philos_seated > 0)
 		usleep(100);
-		if (phil->died)
-		{
-			break ;
-			printf("Merde ils ont tues kenny espece d'en****\n");
-		}
-		phil = phil->right;
-		if (!phil)
-			phil = start;
-	}
-	
+	if (info->died)
+		return (NULL);
+	pthread_mutex_unlock(info->end);
 //	if (clear_philos(&phil) == -1)
 //		return (NULL);
 	return (NULL);
 }
 
-int		launch_observer(t_philo *phil)
+int	launch_threads(t_philo **phil, t_info *info)
 {
-	pthread_t watch;
-
-	if (pthread_create(&watch, NULL, &observe, (void*)phil))
-		return (-1);
-	if (pthread_detach(watch))
-		return (-1);
-	return (0);
-}
-
-int		launch_threads(t_philo *phil)//, t_info *info)
-{
-	t_philo		*cpy;
 	pthread_t	th;
 
-	cpy = phil;
-	if (launch_observer(phil) == -1)
+	if (pthread_create(&th, NULL, &observe, (void *)info))
 		return (-1);
-	while (phil)
+	if (pthread_detach(th))
+		return (-1);
+	info->start_time = get_time();
+	while (*phil)
 	{
-		if (pthread_create(&th, NULL, &routine, (void*)phil))
+		if (pthread_create(&th, NULL, &routine, (void *)*phil))
 			return (-1);
-		phil = phil->right;
-	}
-	while (cpy)
-	{
-		if (pthread_join(th, NULL))
+		if (pthread_detach(th))
 			return (-1);
-		cpy = cpy->right;
+		*phil = (*phil)->right;
 	}
 	return (0);
 }
 
-int		main(int ac, char *av[])
+int	main(int ac, char *av[])
 {
 	t_philo		*phil;
 	t_info		info;
@@ -89,9 +58,11 @@ int		main(int ac, char *av[])
 	phil = init(av, phil, &info);
 	if (!phil)
 		return (-1);
-	if (launch_threads(phil) == -1)
+	if (launch_threads(&phil, &info) == -1)
 		return (-1);
-//	if (clear_philos(&phil) == -1)
-//		return (-1);
+	pthread_mutex_lock(info.end);
+	while (info.philos_seated > 0)
+		usleep(100);
+	pthread_mutex_unlock(info.end);
 	return (0);
 }
