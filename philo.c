@@ -17,8 +17,10 @@ void	*observe(void *arg)
 	t_info		*info;
 
 	info = (t_info *)arg;
+	printf("Obs IN\n");
 	while (!info->died)
 		usleep(100);
+	printf("Obs OUT\n");
 	if (info->died)
 		return (NULL);
 	return (NULL);
@@ -30,10 +32,10 @@ int	launch_threads(t_philo **myphilos, t_info *info)
 	t_philo		*phil;
 	
 	phil = (t_philo *)*myphilos;
-	// if (pthread_create(&th, NULL, &observe, (void *)info))
-	// 	return (-1);
-	// if (pthread_detach(th))
-	// 	return (-1);
+	if (pthread_create(&th, NULL, &observe, (void *)info))
+	 	return (-1);
+	if (pthread_detach(th))
+	 	return (-1);
 	info->start_time = get_time();
 	while (phil)
 	{
