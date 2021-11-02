@@ -51,9 +51,11 @@ t_info		*init_info(char *av[], t_info *info)
 		info->nb_meals_to_eat = 10000;
 	info->status = init_mutex();
 	info->end = init_mutex();
+	info->end_routine = init_mutex();
 	if (!info->status || !info->end)
 		return (NULL);
 	info->died = 0;
+	info->nb_finsh_eat = info->nb_of_philos;
 	return (info);
 }
 

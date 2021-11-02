@@ -12,45 +12,87 @@
 
 #include "philo.h"
 
-void	*death_routine(void *arg)
+void	*observe(void *arg)
 {
 	t_philo		*phil;
+	t_philo		*first;
 
 	phil = (t_philo *)arg;
-	while (!phil->info->died && phil->nb_meals_eaten < phil->info->nb_meals_to_eat)
+	first = phil;
+	while (phil)
 	{
-		if (get_current_time(phil->last_meal) >= phil->info->time_to_die)
+		if (phil->info->died)
 		{
 			pthread_mutex_lock(phil->info->status);
-			phil->info->died = 1;
 			print_msg(phil, DIED);
 			pthread_mutex_unlock(phil->info->status);
 			return (NULL);
 		}
-		usleep(100);
+		phil = phil->right;
+		if (!phil)
+			phil = first;
 	}
 	return (NULL);
 }
-
-void	*routine(void *arg)
+void	*death_routine(void *arg)
 {
-	t_philo				*phil;
-//	pthread_t			death;
+	t_philo		*phil;
+	t_philo		*first;
 
 	phil = (t_philo *)arg;
-	phil->last_meal = 0;
-	// if (pthread_create(&death, NULL, &death_routine, arg))
-	// 	return (NULL);
-	// if (pthread_detach(death))
-	// 	return (NULL);
+	first = phil;
+	ft_usleep(phil->info->time_to_eat + 1);
+	while (phil)
+	{
+		if (get_current_time(phil->info->start_time) - phil->last_meal >= phil->info->time_to_die)
+		{
+			phil->info->died = 1;
+			while (1)
+				usleep(100);
+			return (NULL);
+		}
+		phil = phil->right;
+		if (!phil)
+			phil = first;
+	}
+	return (NULL);
+}
+/*
+void	*meal_routine(void *arg)
+{
+	t_philo		*phil;
+	t_philo		*first;
 
-	// while (!phil->info->died && phil->nb_meals_eaten < phil->info->nb_meals_to_eat)
+	phil = (t_philo *)arg;
+	first = phil;
+	while (phil)
+	{
+		if (phil->nb_meals_eaten >= phil->info->nb_meals_to_eat)
+			phil->info->nb_finsh_eat--;
+		phil = phil->right;
+		if (!phil)
+			phil = first;
+	}
+	return (NULL);
+}
+*/
+void	*routine(void *arg)
+{
+	t_philo		*phil;
+
+	phil = (t_philo *)arg;
+//	while (!phil->info->died && phil->nb_meals_eaten < phil->info->nb_meals_to_eat)
 	while (1)
 	{
 		wait_for_eat(phil);
 		eating(phil);
 		sleeping(phil);
 		thinking(phil);
+		if (phil->info->died)
+		{
+			printf("STOPPED\n");
+			break ;
+		}
 	}
 	return (NULL);
 }

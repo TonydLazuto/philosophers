@@ -34,7 +34,7 @@ char	*append_str(char *str, char *s)
 	return (str);
 }
 
-void	superprint(char *time, char *num_phil, char *state)
+void	concatn_print(char *time, char *num_phil, char *state)
 {
 	char	*statut;
 	

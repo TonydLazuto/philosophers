@@ -21,6 +21,7 @@ t_philo		*new_philo(int num, t_info *info)
 		return (NULL);
 	elet->num = num;
 	elet->nb_meals_eaten = 0;
+	elet->last_meal = 0;
 	elet->info = info;
 	elet->right_fork = NULL;
 	elet->left_fork = NULL;

@@ -47,9 +47,11 @@ typedef struct s_info
 	long			time_to_eat;
 	long			time_to_sleep;
 	long			nb_meals_to_eat;
+	long			nb_finsh_eat;
 	long			start_time;
 	int				died;
 	pthread_mutex_t	*end;
+	pthread_mutex_t	*end_routine;
 	pthread_mutex_t	*status;
 }				t_info;
 
@@ -72,7 +74,7 @@ void		ft_free(char **s);
 char		*ft_itoa(long nb);
 void		ft_putstr(char *s);
 int			ft_strncmp(const char *s1, const char *s2, int n);
-void		superprint(char *time, char *num_phil, char *state);
+void		concatn_print(char *time, char *num_phil, char *state);
 void		print_msg(t_philo *phil, char *state);
 
 int			check_args(int ac, char *av[]);
@@ -89,12 +91,12 @@ long		get_current_time(long start);
 
 void		*death_routine(void *arg);
 void		*routine(void *arg);
+void		*meal_routine(void *arg);
 void		*observe(void *arg);
 
 void		wait_for_eat(t_philo *phil);
 void		eating(t_philo *phil);
 void		sleeping(t_philo *phil);
 void		thinking(t_philo *phil);
-void		eat_alone(t_philo *phil);
 
 #endif
