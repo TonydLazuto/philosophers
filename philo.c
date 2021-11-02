@@ -17,32 +17,31 @@ void	*observe(void *arg)
 	t_info		*info;
 
 	info = (t_info *)arg;
-	while (!info->died && info->philos_seated > 0)
+	while (!info->died)
 		usleep(100);
 	if (info->died)
 		return (NULL);
-	pthread_mutex_unlock(info->end);
-//	if (clear_philos(&phil) == -1)
-//		return (NULL);
 	return (NULL);
 }
 
-int	launch_threads(t_philo **phil, t_info *info)
+int	launch_threads(t_philo **myphilos, t_info *info)
 {
 	pthread_t	th;
-
-	if (pthread_create(&th, NULL, &observe, (void *)info))
-		return (-1);
-	if (pthread_detach(th))
-		return (-1);
+	t_philo		*phil;
+	
+	phil = (t_philo *)*myphilos;
+	// if (pthread_create(&th, NULL, &observe, (void *)info))
+	// 	return (-1);
+	// if (pthread_detach(th))
+	// 	return (-1);
 	info->start_time = get_time();
-	while (*phil)
+	while (phil)
 	{
-		if (pthread_create(&th, NULL, &routine, (void *)*phil))
+		if (pthread_create(&th, NULL, &routine, (void *)phil))
 			return (-1);
 		if (pthread_detach(th))
 			return (-1);
-		*phil = (*phil)->right;
+		phil = phil->right;
 	}
 	return (0);
 }
@@ -58,11 +57,12 @@ int	main(int ac, char *av[])
 	phil = init(av, phil, &info);
 	if (!phil)
 		return (-1);
+	pthread_mutex_lock(phil->info->end);
 	if (launch_threads(&phil, &info) == -1)
 		return (-1);
-	pthread_mutex_lock(info.end);
-	while (info.philos_seated > 0)
+	pthread_mutex_lock(phil->info->end);
+	while (!phil->info->died)
 		usleep(100);
-	pthread_mutex_unlock(info.end);
+	pthread_mutex_unlock(phil->info->end);
 	return (0);
 }

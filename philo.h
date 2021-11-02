@@ -47,11 +47,9 @@ typedef struct s_info
 	long			time_to_eat;
 	long			time_to_sleep;
 	long			nb_meals_to_eat;
-	int				philos_seated;
 	long			start_time;
 	int				died;
 	pthread_mutex_t	*end;
-	pthread_mutex_t	*update;
 	pthread_mutex_t	*status;
 }				t_info;
 
@@ -61,7 +59,6 @@ typedef struct s_philo
 	t_info			*info;
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*mutex;
 	long			nb_meals_eaten;
 	long			last_meal;
 	struct s_philo	*left;
@@ -74,6 +71,7 @@ int			ft_strlen(const char *s);
 void		ft_free(char **s);
 char		*ft_itoa(long nb);
 void		ft_putstr(char *s);
+int			ft_strncmp(const char *s1, const char *s2, int n);
 void		superprint(char *time, char *num_phil, char *state);
 void		print_msg(t_philo *phil, char *state);
 
