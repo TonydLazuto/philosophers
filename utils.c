@@ -12,79 +12,44 @@
 
 #include "philo.h"
 
-void	ft_free(char **s)
+int		ft_isdigit(int c)
 {
-	free(*s);
-	*s = NULL;
-}
-
-char	*append_str(char *str, char *s)
-{
-	int		i;
-	int		len;
-
-	len = ft_strlen(str);
-	i = 0;
-	while (s[i])
-	{
-		str[len + i] = s[i];
-		i++;
-	}
-	str[len + i] = '\0';
-	return (str);
-}
-
-void	superprint(char *time, char *num_phil, char *state)
-{
-	char	*statut;
-	
-	statut = (char *)malloc(ft_strlen(time) + ft_strlen(num_phil)
-			+ ft_strlen(state) + 2);
-	if (!statut)
-		return ;
-	statut[0] = '\0';
-	statut = append_str(statut, time);
-	statut = append_str(statut, " ");
-	statut = append_str(statut, num_phil);
-	statut = append_str(statut, state);
-	ft_free(&time);
-	ft_free(&num_phil);
-	ft_putstr(statut);
-	ft_free(&statut);
-}
-
-long	set_size(long nb)
-{
-	long	size;
-
-	size = 0;
-	if (nb == 0)
+	if (c >= '0' && c <= '9')
 		return (1);
-	while (nb)
-	{
-		nb /= 10;
-		size++;
-	}
-	return (size);
+	return (0);
 }
 
-char	*ft_itoa(long nb)
+long	ft_atoi(const char *str)
 {
-	char	*s;
-	long	size;
+	long long	nb;
 
-	size = set_size(nb);
-	s = (char *)malloc(size + 1);
-	if (!s)
-		return (NULL);
-	if (nb == 0)
-		s[0] = '0';
-	s[size] = '\0';
-	while (nb > 0)
+	nb = 0;
+	while (*str == '\t' || *str == ' ' || *str == '0')
+		str++;
+	while (*str)
 	{
-		size--;
-		s[size] = nb % 10 + '0';
-		nb /= 10;
+		nb = nb * 10 + *str - '0';
+		str++;
 	}
-	return (s);
+	return ((long)nb);
+}
+
+int		ft_strlen(const char *s)
+{
+	int	len;
+
+	len = 0;
+	if (s)
+	{
+		while (s[len])
+			len++;
+	}
+	return (len);
+}
+
+void	ft_putstr(char *s)
+{
+	if (!s)
+		return ;
+	write(1, s, ft_strlen(s));
 }

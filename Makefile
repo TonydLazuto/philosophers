@@ -27,7 +27,7 @@ OBJS		=	$(addprefix $(OBJ_DIR)/,$(SRCS:.c=.o))
 all: 			$(NAME)
 
 $(NAME): 		$(OBJS)
-				$(CC) -o $(NAME) $(OBJS) -pthread
+				$(CC) -g3 -fsanitize=address -o $(NAME) $(OBJS) -pthread
 
 $(OBJ_DIR)/%.o:	%.c
 				@mkdir -p $(OBJ_DIR)

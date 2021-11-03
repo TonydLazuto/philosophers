@@ -14,21 +14,19 @@
 
 void	print_msg(t_philo *phil, char *state)
 {
-	char	*time;
-	char	*num_phil;
-	int		timestamp;
+	char	buf[LEN_STATE];
+	char	tmp[20];
+	char	*ret;
 
-	num_phil = NULL;
-	time = NULL;
-	timestamp = get_current_time(phil->info->start_time);
-	time = ft_itoa(timestamp);
-	if (!time)
-		return ;
-	num_phil = ft_itoa((long)phil->num);
-	if (!num_phil)
-		return ;
+	ret = ft_itoa(get_current_time(phil->info->start_time), tmp);
+	ft_strlcpy(buf, ret, ft_strlen(ret));
+	ft_strcat(buf, " ");
+	ret = ft_itoa((long)phil->num, tmp);
+	ft_strcat(buf, ret);
+	ft_strcat(buf, state);
 	if (!phil->info->died)
-		superprint(time, num_phil, state);	
+		ft_putstr(buf);
+	ret = NULL;
 }
 
 void	wait_for_eat(t_philo *phil)
@@ -43,7 +41,6 @@ void	wait_for_eat(t_philo *phil)
 		l_fork = phil->right_fork;
 		r_fork = phil->left_fork;
 	}
-	pthread_mutex_lock(phil->mut);
 	pthread_mutex_lock(l_fork);
 	pthread_mutex_lock(phil->info->status);
 	print_msg(phil, TAKEFORK);
@@ -52,13 +49,10 @@ void	wait_for_eat(t_philo *phil)
 	pthread_mutex_lock(phil->info->status);
 	print_msg(phil, TAKEFORK);
 	pthread_mutex_unlock(phil->info->status);
-	pthread_mutex_unlock(phil->mut);
 }
 
 void	eating(t_philo *phil)
 {	
-//	print_msg(get_current_time(phil->start_time), phil->num, " --> get_current_time()\n", phil);
-//	print_msg(phil->info->time_to_eat, phil->num, " --> time_to_eat\n", phil);
 	pthread_mutex_lock(phil->mut);
 	pthread_mutex_lock(phil->info->status);
 	print_msg(phil, EATING);

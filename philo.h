@@ -25,20 +25,12 @@
 # include <errno.h>
 # include <ctype.h>
 
-# define COLOR_RESET   "\x1b[0m"
-# define BOLDRED "\033[1m\033[31m"
-# define BOLDGREEN "\033[1m\033[32m"
-# define BOLDYELLOW "\033[1m\033[33m"
-# define BOLDBLUE "\033[1m\033[34m"
-# define BOLDMAGENTA "\033[1m\033[35m"
-# define BOLDCYAN "\033[1m\033[36m"
-# define BOLDWHITE "\033[1m\033[37m"
-
 # define TAKEFORK " has taken a fork\n"
 # define EATING " is eating\n"
 # define SLEEPING " is sleeping\n"
 # define THINKING " is thinking\n"
 # define DIED " died\n"
+# define LEN_STATE 40
 
 typedef struct s_info
 {
@@ -72,9 +64,11 @@ long		ft_atoi(const char *str);
 int			ft_isdigit(int c);
 int			ft_strlen(const char *s);
 void		ft_free(char **s);
-char		*ft_itoa(long nb);
+char		*ft_itoa(long nb, char *s);
 void		ft_putstr(char *s);
-int			ft_strncmp(const char *s1, const char *s2, int n);
+int			ft_strlcpy(char * dst,
+				const char * src, int dstsize);
+char		*ft_strcat(char * dst, const char * src);
 void		superprint(char *time, char *num_phil, char *state);
 void		print_msg(t_philo *phil, char *state);
 
@@ -90,9 +84,9 @@ long		get_time(void);
 void		ft_usleep(long time);
 long		get_current_time(long start);
 
-void		*death_routine(void *arg);
-void		*routine(void *arg);
-void		*observe(void *arg);
+void		*death_routine(void *data);
+void		*routine(void *data);
+void		*observe(void *data);
 
 void		wait_for_eat(t_philo *phil);
 void		eating(t_philo *phil);

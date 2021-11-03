@@ -12,19 +12,6 @@
 
 #include "philo.h"
 
-void	*observe(void *arg)
-{
-	t_info		*info;
-
-	info = (t_info *)arg;
-	while (!info->died && info->philos_seated > 0)
-		usleep(100);
-	if (info->died)
-		return (NULL);
-	pthread_mutex_unlock(info->end);
-	return (NULL);
-}
-
 int	launch_threads(t_philo **myphilos, t_info *info)
 {
 	pthread_t	th;

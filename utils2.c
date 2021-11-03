@@ -12,67 +12,74 @@
 
 #include "philo.h"
 
-int		ft_isdigit(int c)
+int		ft_strlcpy(char *dst,
+			const char *src, int dstsize)
 {
-	if (c >= '0' && c <= '9')
-		return (1);
-	return (0);
-}
+	int	i;
 
-long	ft_atoi(const char *str)
-{
-	long long	nb;
-
-	nb = 0;
-	while (*str == '\t' || *str == ' ' || *str == '0')
-		str++;
-	while (*str)
-	{
-		nb = nb * 10 + *str - '0';
-		str++;
-	}
-	return ((long)nb);
-}
-
-int		ft_strlen(const char *s)
-{
-	int	len;
-
-	len = 0;
-	if (s)
-	{
-		while (s[len])
-			len++;
-	}
-	return (len);
-}
-
-void	ft_putstr(char *s)
-{
-	if (!s)
-		return ;
-	write(1, s, ft_strlen(s));
-}
-
-int		ft_strncmp(const char *s1, const char *s2, int n)
-{
-	int				i;
-	unsigned char	*str1;
-	unsigned char	*str2;
-
-	str1 = (unsigned char *)s1;
-	str2 = (unsigned char *)s2;
 	i = 0;
-	if (n == 0)
+	if (src == 0)
 		return (0);
-	while (str1[i] && str2[i] && str1[i] == str2[i] && i < n - 1)
-		i++;
-	if (str1[i] != str2[i])
+	if (dstsize == 0)
+		return (ft_strlen(src));
+	while (src[i] && i < dstsize)
 	{
-		if (str1[i] - str2[i] > 0)
-			return (1);
-		else
-			return (-1);
+		dst[i] = src[i];
+		i++;
 	}
-	return (0);
+	dst[i] = '\0';
+	if (dstsize <= ft_strlen(src))
+		return (ft_strlen(src));
+	return (i);
+}
+
+char	*ft_strcat(char * dst, const char * src)
+{
+	int	j;
+	int	len;
+	char *str;
+
+	len = ft_strlen(dst);
+	j = 0;
+	while (src[j])
+	{
+		dst[len + j] = src[j];
+		j++;
+	}
+	dst[len + j] = '\0';
+	str = &dst[0];
+	return (str);
+}
+
+long	set_size(long nb)
+{
+	long	size;
+
+	size = 0;
+	if (nb == 0)
+		return (1);
+	while (nb)
+	{
+		nb /= 10;
+		size++;
+	}
+	return (size);
+}
+
+
+char	*ft_itoa(long nb, char *s)
+{
+	long size;
+
+	size = set_size(nb);
+	if (nb == 0)
+		s[0] = '0';
+	s[size] = '\0';
+	while (nb > 0)
+	{
+		size--;
+		s[size] = nb % 10 + '0';
+		nb /= 10;
+	}
+	return (s);
 }
