@@ -81,12 +81,12 @@ t_philo		*init(char *av[], t_philo *phil, t_info *info)
 		link_left_fork(&phil);
 	return (phil);
 }
-/*
-t_philo		*destroy_mutex(t_philo *phil)
+
+void		free_mutex(pthread_mutex_t **mut)
 {
-	pthread_mutex_unlock(phil->right_fork);
-	if (pthread_mutex_destroy(phil->right_fork))
-		return (NULL);
-	return (phil);
+	//pthread_mutex_unlock(*mut);
+	//if (pthread_mutex_destroy(*mut))
+		//return ;
+	free(*mut);
+	*mut = NULL;
 }
-*/

@@ -56,7 +56,7 @@ void		push_back(t_philo **phil, int num, t_info *info)
 	elet->left = tmp;
 	tmp->right = elet;
 }
-/*
+
 t_philo		*pop_front(t_philo *phil)
 {
 	t_philo	*first;
@@ -76,27 +76,17 @@ t_philo		*pop_front(t_philo *phil)
 
 int			clear_philos(t_philo **phil)
 {
-	if ((*phil)->left)
-	{
-		while ((*phil)->left)
-		{
-			printf("phil num : %d\n", (*phil)->num);
-			*phil = (*phil)->left;
-		}
-	}
+	// free_mutex(&(*phil)->info->end);
+	// free_mutex(&(*phil)->info->check_seats);
+	// free_mutex(&(*phil)->info->status);
 	while (*phil)
 	{
-		printf("phil num : %d\n", (*phil)->num);
-		*phil = destroy_mutex(*phil);
-		free((*phil)->right_fork);
-		(*phil)->right_fork = NULL;
-		(*phil)->info = NULL;
+		// free_mutex(&(*phil)->right_fork);
+		// (*phil)->info = NULL;
 		if (!*phil)
 			return (-1);
-		*phil = (*phil)->right;
 		*phil = pop_front(*phil);
 	}
 
 	return (0);
 }
-*/

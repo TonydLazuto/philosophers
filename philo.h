@@ -63,13 +63,11 @@ typedef struct s_philo
 long		ft_atoi(const char *str);
 int			ft_isdigit(int c);
 int			ft_strlen(const char *s);
-void		ft_free(char **s);
 char		*ft_itoa(long nb, char *s);
 void		ft_putstr(char *s);
 int			ft_strlcpy(char * dst,
 				const char * src, int dstsize);
 char		*ft_strcat(char * dst, const char * src);
-void		superprint(char *time, char *num_phil, char *state);
 void		print_msg(t_philo *phil, char *state);
 
 int			check_args(int ac, char *av[]);
@@ -78,7 +76,7 @@ t_philo		*last_philo(t_philo *elet);
 int			clear_philos(t_philo **phil);
 
 t_philo		*init(char *av[], t_philo *phil, t_info *info);
-t_philo		*destroy_mutex(t_philo *phil);
+void		free_mutex(pthread_mutex_t **mut);
 
 long		get_time(void);
 void		ft_usleep(long time);

@@ -14,14 +14,13 @@
 
 void	*observe(void *data)
 {
-	t_info		*info;
+	t_philo		*phil;
 
-	info = (t_info *)data;
-	while (!info->died && info->philos_seated > 0)
+	phil = (t_philo *)data;
+	while (!phil->info->died && phil->info->philos_seated > 0)
 		usleep(100);
-	if (info->died)
+	if (phil->info->died)
 		return (NULL);
-	pthread_mutex_unlock(info->end);
 	return (NULL);
 }
 
@@ -40,8 +39,8 @@ void	*death_routine(void *data)
 			print_msg(phil, DIED);
 			phil->info->died = 1;
 			pthread_mutex_unlock(phil->info->status);
+			//pthread_mutex_unlock(phil->info->end);
 			pthread_mutex_unlock(phil->mut);
-			pthread_mutex_unlock(phil->info->end);
 			return (NULL);
 		}
 		pthread_mutex_unlock(phil->mut);

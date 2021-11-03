@@ -12,13 +12,11 @@
 
 #include "philo.h"
 
-int	launch_threads(t_philo **myphilos, t_info *info)
+int	launch_threads(t_philo *phil, t_info *info)
 {
 	pthread_t	th;
-	t_philo		*phil;
-	
-	phil = (t_philo *)*myphilos;
-	if (pthread_create(&th, NULL, &observe, (void *)info))
+
+	if (pthread_create(&th, NULL, &observe, (void *)phil))
 	  	return (-1);
 	if (pthread_detach(th))
 	  	return (-1);
@@ -45,12 +43,13 @@ int	main(int ac, char *av[])
 	phil = init(av, phil, &info);
 	if (!phil)
 		return (-1);
-	pthread_mutex_lock(phil->info->end);
-	if (launch_threads(&phil, &info) == -1)
+	if (launch_threads(phil, &info) == -1)
 		return (-1);
 	pthread_mutex_lock(phil->info->end);
 	while (phil->info->philos_seated > 0)
 		usleep(100);
 	pthread_mutex_unlock(phil->info->end);
+	if (!clear_philos(&phil))
+		return (-1);
 	return (0);
 }
