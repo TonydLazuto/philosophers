@@ -48,8 +48,10 @@ typedef struct s_info
 	long			time_to_sleep;
 	long			nb_meals_to_eat;
 	long			start_time;
+	long			philos_seated;
 	int				died;
 	pthread_mutex_t	*end;
+	pthread_mutex_t	*check_seats;
 	pthread_mutex_t	*status;
 }				t_info;
 
@@ -57,6 +59,7 @@ typedef struct s_philo
 {
 	int				num;
 	t_info			*info;
+	pthread_mutex_t	*mut;
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	*left_fork;
 	long			nb_meals_eaten;

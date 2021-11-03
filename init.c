@@ -49,9 +49,11 @@ t_info		*init_info(char *av[], t_info *info)
 		info->nb_meals_to_eat = ft_atoi(av[5]);
 	else
 		info->nb_meals_to_eat = 10000;
+	info->philos_seated = info->nb_of_philos;
 	info->status = init_mutex();
+	info->check_seats = init_mutex();
 	info->end = init_mutex();
-	if (!info->status || !info->end)
+	if (!info->status || !info->check_seats || !info->end)
 		return (NULL);
 	info->died = 0;
 	return (info);
@@ -71,6 +73,7 @@ t_philo		*init(char *av[], t_philo *phil, t_info *info)
 	{
 		push_back(&phil, i + 1, info);
 		last = last_philo(phil);
+		last->mut = init_mutex();
 		last->right_fork = init_mutex();
 		i++;
 	}

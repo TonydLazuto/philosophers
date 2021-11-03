@@ -17,12 +17,11 @@ void	*observe(void *arg)
 	t_info		*info;
 
 	info = (t_info *)arg;
-	printf("Obs IN\n");
-	while (!info->died)
+	while (!info->died && info->philos_seated > 0)
 		usleep(100);
-	printf("Obs OUT\n");
 	if (info->died)
 		return (NULL);
+	pthread_mutex_unlock(info->end);
 	return (NULL);
 }
 
@@ -32,10 +31,10 @@ int	launch_threads(t_philo **myphilos, t_info *info)
 	t_philo		*phil;
 	
 	phil = (t_philo *)*myphilos;
-	// if (pthread_create(&th, NULL, &observe, (void *)info))
-	//  	return (-1);
-	// if (pthread_detach(th))
-	//  	return (-1);
+	if (pthread_create(&th, NULL, &observe, (void *)info))
+	  	return (-1);
+	if (pthread_detach(th))
+	  	return (-1);
 	info->start_time = get_time();
 	while (phil)
 	{
@@ -59,13 +58,12 @@ int	main(int ac, char *av[])
 	phil = init(av, phil, &info);
 	if (!phil)
 		return (-1);
-//	pthread_mutex_lock(phil->info->end);
+	pthread_mutex_lock(phil->info->end);
 	if (launch_threads(&phil, &info) == -1)
 		return (-1);
-/*	pthread_mutex_lock(phil->info->end);
-	while (!phil->info->died)
+	pthread_mutex_lock(phil->info->end);
+	while (phil->info->philos_seated > 0)
 		usleep(100);
 	pthread_mutex_unlock(phil->info->end);
-*/
 	return (0);
 }

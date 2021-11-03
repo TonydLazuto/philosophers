@@ -43,6 +43,7 @@ void	wait_for_eat(t_philo *phil)
 		l_fork = phil->right_fork;
 		r_fork = phil->left_fork;
 	}
+	pthread_mutex_lock(phil->mut);
 	pthread_mutex_lock(l_fork);
 	pthread_mutex_lock(phil->info->status);
 	print_msg(phil, TAKEFORK);
@@ -51,17 +52,20 @@ void	wait_for_eat(t_philo *phil)
 	pthread_mutex_lock(phil->info->status);
 	print_msg(phil, TAKEFORK);
 	pthread_mutex_unlock(phil->info->status);
+	pthread_mutex_unlock(phil->mut);
 }
 
 void	eating(t_philo *phil)
 {	
 //	print_msg(get_current_time(phil->start_time), phil->num, " --> get_current_time()\n", phil);
 //	print_msg(phil->info->time_to_eat, phil->num, " --> time_to_eat\n", phil);
+	pthread_mutex_lock(phil->mut);
 	pthread_mutex_lock(phil->info->status);
 	print_msg(phil, EATING);
 	pthread_mutex_unlock(phil->info->status);
 	phil->last_meal = get_current_time(phil->last_meal);
 	ft_usleep(phil->info->time_to_eat);
+	pthread_mutex_unlock(phil->mut);
 	pthread_mutex_unlock(phil->right_fork);
 	pthread_mutex_unlock(phil->left_fork);
 	phil->nb_meals_eaten++;
