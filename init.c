@@ -51,6 +51,7 @@ t_info		*init_info(char *av[], t_info *info)
 		info->nb_meals_to_eat = 10000;
 	info->philos_seated = info->nb_of_philos;
 	info->status = init_mutex();
+	info->starv_zone = init_mutex();
 	info->check_seats = init_mutex();
 	info->end = init_mutex();
 	if (!info->status || !info->check_seats || !info->end)
@@ -82,11 +83,11 @@ t_philo		*init(char *av[], t_philo *phil, t_info *info)
 	return (phil);
 }
 
-void		free_mutex(pthread_mutex_t **mut)
+void		free_mutex(pthread_mutex_t *mut)
 {
 	//pthread_mutex_unlock(*mut);
-	//if (pthread_mutex_destroy(*mut))
-		//return ;
-	free(*mut);
-	*mut = NULL;
+//	if (pthread_mutex_destroy(mut))
+//		return ;
+	free(mut);
+	mut = NULL;
 }

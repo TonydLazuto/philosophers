@@ -76,12 +76,14 @@ t_philo		*pop_front(t_philo *phil)
 
 int			clear_philos(t_philo **phil)
 {
-	// free_mutex(&(*phil)->info->end);
-	// free_mutex(&(*phil)->info->check_seats);
-	// free_mutex(&(*phil)->info->status);
+	free_mutex((*phil)->info->end);
+	free_mutex((*phil)->info->check_seats);
+	free_mutex((*phil)->info->status);
+	free_mutex((*phil)->info->starv_zone);
 	while (*phil)
 	{
-		// free_mutex(&(*phil)->right_fork);
+		free_mutex((*phil)->right_fork);
+		free_mutex((*phil)->mut);
 		// (*phil)->info = NULL;
 		if (!*phil)
 			return (-1);

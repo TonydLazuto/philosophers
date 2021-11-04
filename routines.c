@@ -18,7 +18,7 @@ void	*observe(void *data)
 
 	phil = (t_philo *)data;
 	while (!phil->info->died && phil->info->philos_seated > 0)
-		usleep(100);
+		ft_usleep(0.5);
 	if (phil->info->died)
 		return (NULL);
 	return (NULL);
@@ -29,7 +29,8 @@ void	*death_routine(void *data)
 	t_philo		*phil;
 
 	phil = (t_philo *)data;
-	while (!phil->info->died && phil->nb_meals_eaten < phil->info->nb_meals_to_eat)
+
+	while (!phil->info->died && phil->nb_meals_eaten <= phil->info->nb_meals_to_eat)
 	{
 		pthread_mutex_lock(phil->mut);
 		if (get_current_time(phil->info->start_time) - phil->last_meal
@@ -44,6 +45,7 @@ void	*death_routine(void *data)
 			return (NULL);
 		}
 		pthread_mutex_unlock(phil->mut);
+		ft_usleep(1);
 	}
 //	printf("Gone from death routine\n");
 	return (NULL);
@@ -55,7 +57,7 @@ void	*routine(void *data)
 	pthread_t	death;
 
 	phil = (t_philo *)data;
-	phil->last_meal = 0;
+	phil->last_meal = get_time();
 	if (pthread_create(&death, NULL, &death_routine, data))
 	  	return (NULL);
 	if (pthread_detach(death))

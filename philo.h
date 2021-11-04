@@ -44,6 +44,7 @@ typedef struct s_info
 	int				died;
 	pthread_mutex_t	*end;
 	pthread_mutex_t	*check_seats;
+	pthread_mutex_t	*starv_zone;
 	pthread_mutex_t	*status;
 }				t_info;
 
@@ -76,7 +77,7 @@ t_philo		*last_philo(t_philo *elet);
 int			clear_philos(t_philo **phil);
 
 t_philo		*init(char *av[], t_philo *phil, t_info *info);
-void		free_mutex(pthread_mutex_t **mut);
+void		free_mutex(pthread_mutex_t *mut);
 
 long		get_time(void);
 void		ft_usleep(long time);
@@ -90,6 +91,7 @@ void		wait_for_eat(t_philo *phil);
 void		eating(t_philo *phil);
 void		sleeping(t_philo *phil);
 void		thinking(t_philo *phil);
-void		eat_alone(t_philo *phil);
+
+int			eat_alone(t_philo *phil);
 
 #endif

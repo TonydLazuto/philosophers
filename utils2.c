@@ -83,3 +83,20 @@ char	*ft_itoa(long nb, char *s)
 	}
 	return (s);
 }
+
+void	print_msg(t_philo *phil, char *state)
+{
+	char	buf[LEN_STATE];
+	char	tmp[20];
+	char	*ret;
+
+	ret = ft_itoa(get_current_time(phil->info->start_time), tmp);
+	ft_strlcpy(buf, ret, ft_strlen(ret));
+	ft_strcat(buf, " ");
+	ret = ft_itoa((long)phil->num, tmp);
+	ft_strcat(buf, ret);
+	ft_strcat(buf, state);
+	if (!phil->info->died)
+		ft_putstr(buf);
+	ret = NULL;
+}
