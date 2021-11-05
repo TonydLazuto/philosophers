@@ -52,10 +52,10 @@ int	main(int ac, char *av[])
 	}
 	if (launch_threads(phil, &info) == -1)
 		return (-1);
-	pthread_mutex_lock(phil->info->end);
+	pthread_mutex_lock(&phil->info->end);
 	while (phil->info->philos_seated > 0)
-		ft_usleep(0.1);
-	pthread_mutex_unlock(phil->info->end);
+		ft_usleep((double)0.1);
+	pthread_mutex_unlock(&phil->info->end);
 	if (!clear_philos(&phil))
 		return (-1);
 	return (0);

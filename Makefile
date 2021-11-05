@@ -2,7 +2,7 @@
 
 NAME		=	philo
 
-CC			=	gcc
+CC			=	cc
 
 CFLAGS		=	-Wall -Wextra -Werror
 
@@ -27,7 +27,7 @@ OBJS		=	$(addprefix $(OBJ_DIR)/,$(SRCS:.c=.o))
 all: 			$(NAME)
 
 $(NAME): 		$(OBJS)
-				$(CC) -o $(NAME) $(OBJS) -lpthread
+				$(CC) -g3 -fsanitize=thread -o $(NAME) $(OBJS) -lpthread
 
 $(OBJ_DIR)/%.o:	%.c
 				@mkdir -p $(OBJ_DIR)

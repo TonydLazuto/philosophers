@@ -50,11 +50,6 @@ t_info	*init_info(char *av[], t_info *info)
 	else
 		info->nb_meals_to_eat = INT_MAX;
 	info->philos_seated = info->nb_of_philos;
-	info->status = init_mutex();
-	info->check_seats = init_mutex();
-	info->end = init_mutex();
-	if (!info->status || !info->check_seats || !info->end)
-		return (NULL);
 	info->died = 0;
 	return (info);
 }
@@ -87,8 +82,8 @@ t_philo	*init(char *av[], t_philo *phil, t_info *info)
 
 void	free_mutex(pthread_mutex_t *mut)
 {
-//	if (pthread_mutex_destroy(mut))
-//		return ;
+	if (pthread_mutex_destroy(mut))
+		return ;
 	free(mut);
 	mut = NULL;
 }

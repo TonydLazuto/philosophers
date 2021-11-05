@@ -41,9 +41,9 @@ typedef struct s_info
 	long			start_time;
 	long			philos_seated;
 	int				died;
-	pthread_mutex_t	*end;
-	pthread_mutex_t	*check_seats;
-	pthread_mutex_t	*status;
+	pthread_mutex_t	end;
+	pthread_mutex_t	check_seats;
+	pthread_mutex_t	status;
 }				t_info;
 
 typedef struct s_philo
