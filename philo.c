@@ -17,9 +17,9 @@ int	launch_threads(t_philo *phil, t_info *info)
 	pthread_t	th;
 
 	if (pthread_create(&th, NULL, &observe, (void *)phil))
-	  	return (-1);
+		return (-1);
 	if (pthread_detach(th))
-	  	return (-1);
+		return (-1);
 	info->start_time = get_time();
 	while (phil)
 	{
@@ -43,13 +43,20 @@ int	main(int ac, char *av[])
 	phil = init(av, phil, &info);
 	if (!phil)
 		return (-1);
+	if (info.nb_of_philos == 1)
+	{
+		eat_alone(phil);
+		if (!clear_philos(&phil))
+			return (-1);
+		return (0);
+	}
 	if (launch_threads(phil, &info) == -1)
 		return (-1);
 	pthread_mutex_lock(phil->info->end);
 	while (phil->info->philos_seated > 0)
 		ft_usleep(0.1);
-	pthread_mutex_unlock(phil->info->end);
 	if (!clear_philos(&phil))
 		return (-1);
+	pthread_mutex_unlock(phil->info->end);
 	return (0);
 }

@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-int		check_args(int ac, char *av[])
+int	check_args(int ac, char *av[])
 {
 	int		i;
 	int		j;
@@ -29,8 +29,8 @@ int		check_args(int ac, char *av[])
 				return (-1);
 			j++;
 		}
-		if (ft_strlen(av[i]) > ft_strlen("2147483647") || 
-			ft_atoi(av[i]) < 1 || ft_atoi(av[i]) > INT_MAX)
+		if (ft_strlen(av[i]) > ft_strlen("2147483647")
+			|| ft_atoi(av[i]) < 1 || ft_atoi(av[i]) > INT_MAX)
 			return (-1);
 		i++;
 	}

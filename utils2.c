@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-int		ft_strlcpy(char *dst,
+int	ft_strlcpy(char *dst,
 			const char *src, int dstsize)
 {
 	int	i;
@@ -33,11 +33,11 @@ int		ft_strlcpy(char *dst,
 	return (i);
 }
 
-char	*ft_strcat(char * dst, const char * src)
+char	*ft_strcat(char *dst, const char *src)
 {
-	int	j;
-	int	len;
-	char *str;
+	int		j;
+	int		len;
+	char	*str;
 
 	len = ft_strlen(dst);
 	j = 0;
@@ -66,10 +66,9 @@ long	set_size(long nb)
 	return (size);
 }
 
-
 char	*ft_itoa(long nb, char *s)
 {
-	long size;
+	long	size;
 
 	size = set_size(nb);
 	if (nb == 0)
@@ -86,7 +85,7 @@ char	*ft_itoa(long nb, char *s)
 
 void	print_msg(t_philo *phil, char *state)
 {
-	char	buf[LEN_STATE];
+	char	buf[40];
 	char	tmp[20];
 	char	*ret;
 

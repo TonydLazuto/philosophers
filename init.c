@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-void		link_left_fork(t_philo **phil)
+void	link_left_fork(t_philo **phil)
 {
 	t_philo	*cpy;
 
@@ -27,11 +27,11 @@ void		link_left_fork(t_philo **phil)
 	}
 }
 
-pthread_mutex_t		*init_mutex()
+pthread_mutex_t	*init_mutex(void)
 {
 	pthread_mutex_t	*mutex;
 
-	mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
+	mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
 	if (!mutex)
 		return (NULL);
 	if (pthread_mutex_init(mutex, NULL))
@@ -39,7 +39,7 @@ pthread_mutex_t		*init_mutex()
 	return (mutex);
 }
 
-t_info		*init_info(char *av[], t_info *info)
+t_info	*init_info(char *av[], t_info *info)
 {
 	info->nb_of_philos = ft_atoi(av[1]);
 	info->time_to_die = ft_atoi(av[2]);
@@ -48,10 +48,9 @@ t_info		*init_info(char *av[], t_info *info)
 	if (av[5])
 		info->nb_meals_to_eat = ft_atoi(av[5]);
 	else
-		info->nb_meals_to_eat = 10000;
+		info->nb_meals_to_eat = INT_MAX;
 	info->philos_seated = info->nb_of_philos;
 	info->status = init_mutex();
-	info->starv_zone = init_mutex();
 	info->check_seats = init_mutex();
 	info->end = init_mutex();
 	if (!info->status || !info->check_seats || !info->end)
@@ -60,8 +59,7 @@ t_info		*init_info(char *av[], t_info *info)
 	return (info);
 }
 
-
-t_philo		*init(char *av[], t_philo *phil, t_info *info)
+t_philo	*init(char *av[], t_philo *phil, t_info *info)
 {
 	int			i;
 	t_philo		*last;
@@ -78,14 +76,15 @@ t_philo		*init(char *av[], t_philo *phil, t_info *info)
 		last->right_fork = init_mutex();
 		i++;
 	}
-	if (phil->right)
+	if (phil->info->nb_of_philos == 1)
+		phil->left_fork = NULL;
+	else
 		link_left_fork(&phil);
 	return (phil);
 }
 
-void		free_mutex(pthread_mutex_t *mut)
+void	free_mutex(pthread_mutex_t *mut)
 {
-	//pthread_mutex_unlock(*mut);
 //	if (pthread_mutex_destroy(mut))
 //		return ;
 	free(mut);

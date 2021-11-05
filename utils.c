@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-int		ft_isdigit(int c)
+int	ft_isdigit(int c)
 {
 	if (c >= '0' && c <= '9')
 		return (1);
@@ -34,7 +34,7 @@ long	ft_atoi(const char *str)
 	return ((long)nb);
 }
 
-int		ft_strlen(const char *s)
+int	ft_strlen(const char *s)
 {
 	int	len;
 

@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-t_philo		*new_philo(int num, t_info *info)
+t_philo	*new_philo(int num, t_info *info)
 {
 	t_philo	*elet;
 
@@ -29,7 +29,7 @@ t_philo		*new_philo(int num, t_info *info)
 	return (elet);
 }
 
-t_philo		*last_philo(t_philo *elet)
+t_philo	*last_philo(t_philo *elet)
 {
 	if (!elet)
 		return (NULL);
@@ -38,7 +38,7 @@ t_philo		*last_philo(t_philo *elet)
 	return (elet);
 }
 
-void		push_back(t_philo **phil, int num, t_info *info)
+void	push_back(t_philo **phil, int num, t_info *info)
 {
 	t_philo	*elet;
 	t_philo	*tmp;
@@ -57,7 +57,7 @@ void		push_back(t_philo **phil, int num, t_info *info)
 	tmp->right = elet;
 }
 
-t_philo		*pop_front(t_philo *phil)
+t_philo	*pop_front(t_philo *phil)
 {
 	t_philo	*first;
 
@@ -74,21 +74,19 @@ t_philo		*pop_front(t_philo *phil)
 	return (phil);
 }
 
-int			clear_philos(t_philo **phil)
+int	clear_philos(t_philo **phil)
 {
-	free_mutex((*phil)->info->end);
-	free_mutex((*phil)->info->check_seats);
-	free_mutex((*phil)->info->status);
-	free_mutex((*phil)->info->starv_zone);
+	// free_mutex((*phil)->info->end);
+	// free_mutex((*phil)->info->check_seats);
+	// free_mutex((*phil)->info->status);
 	while (*phil)
 	{
-		free_mutex((*phil)->right_fork);
-		free_mutex((*phil)->mut);
+		// free_mutex((*phil)->right_fork);
+		// free_mutex((*phil)->mut);
 		// (*phil)->info = NULL;
 		if (!*phil)
 			return (-1);
 		*phil = pop_front(*phil);
 	}
-
 	return (0);
 }

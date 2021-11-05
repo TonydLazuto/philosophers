@@ -29,25 +29,20 @@ void	*death_routine(void *data)
 	t_philo		*phil;
 
 	phil = (t_philo *)data;
-
-	while (!phil->info->died && phil->nb_meals_eaten <= phil->info->nb_meals_to_eat)
+	while (!phil->info->died && phil->nb_meals_eaten
+		< phil->info->nb_meals_to_eat)
 	{
-		pthread_mutex_lock(phil->mut);
 		if (get_current_time(phil->info->start_time) - phil->last_meal
-				>= phil->info->time_to_die)
+			> phil->info->time_to_die + 5)
 		{
 			pthread_mutex_lock(phil->info->status);
 			print_msg(phil, DIED);
 			phil->info->died = 1;
 			pthread_mutex_unlock(phil->info->status);
-			//pthread_mutex_unlock(phil->info->end);
-			pthread_mutex_unlock(phil->mut);
 			return (NULL);
 		}
-		pthread_mutex_unlock(phil->mut);
 		ft_usleep(1);
 	}
-//	printf("Gone from death routine\n");
 	return (NULL);
 }
 
@@ -57,13 +52,13 @@ void	*routine(void *data)
 	pthread_t	death;
 
 	phil = (t_philo *)data;
-	phil->last_meal = get_time();
+	phil->last_meal = get_current_time(phil->info->start_time);
 	if (pthread_create(&death, NULL, &death_routine, data))
-	  	return (NULL);
+		return (NULL);
 	if (pthread_detach(death))
-	  	return (NULL);
+		return (NULL);
 	while (!phil->info->died && phil->nb_meals_eaten
-			< phil->info->nb_meals_to_eat)
+		< phil->info->nb_meals_to_eat)
 	{
 		wait_for_eat(phil);
 		eating(phil);

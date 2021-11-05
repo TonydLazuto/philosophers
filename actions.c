@@ -12,25 +12,24 @@
 
 #include "philo.h"
 
-void	check_starvation(t_philo *phil)
+void	eat_alone(t_philo *phil)
 {
-	if (phil->info->time_to_die > phil->info->time_to_eat * 2
-			+ phil->info->time_to_sleep)
-	{
-//		printf("Special case\n");
-		pthread_mutex_lock(phil->info->starv_zone);
-		if (get_current_time(phil->info->start_time) - phil->last_meal
-			== phil->info->time_to_eat + phil->info->time_to_sleep)
-		{
-//			printf("philo %d got more sleep, gluttony bastard\n", phil->num);
-			ft_usleep(phil->info->time_to_eat);
-		}
-		pthread_mutex_unlock(phil->info->starv_zone);
-	}
-	
-/**
- * 800 > 200*2 + 200
- **/
+	pthread_t	death;
+
+	phil->info->start_time = get_time();
+	phil->last_meal = get_current_time(phil->info->start_time);
+	if (pthread_create(&death, NULL, &death_routine, (void *)phil))
+		return ;
+	if (pthread_detach(death))
+		return ;
+	pthread_mutex_lock(phil->right_fork);
+	pthread_mutex_lock(phil->info->status);
+	print_msg(phil, TAKEFORK);
+	pthread_mutex_unlock(phil->info->status);
+	while (!phil->info->died && phil->nb_meals_eaten
+		< phil->info->nb_meals_to_eat)
+		ft_usleep(0.5);
+	pthread_mutex_unlock(phil->right_fork);
 }
 
 void	wait_for_eat(t_philo *phil)
@@ -45,13 +44,11 @@ void	wait_for_eat(t_philo *phil)
 		l_fork = phil->right_fork;
 		r_fork = phil->left_fork;
 	}
-	check_starvation(phil);
 	pthread_mutex_lock(l_fork);
 	pthread_mutex_lock(phil->info->status);
 	print_msg(phil, TAKEFORK);
 	pthread_mutex_unlock(phil->info->status);
 	pthread_mutex_lock(r_fork);
-	pthread_mutex_lock(phil->mut);
 	pthread_mutex_lock(phil->info->status);
 	print_msg(phil, TAKEFORK);
 	pthread_mutex_unlock(phil->info->status);
@@ -59,16 +56,16 @@ void	wait_for_eat(t_philo *phil)
 
 void	eating(t_philo *phil)
 {	
-	
+	pthread_mutex_lock(phil->mut);
+	phil->last_meal = get_current_time(phil->info->start_time);
 	pthread_mutex_lock(phil->info->status);
 	print_msg(phil, EATING);
 	pthread_mutex_unlock(phil->info->status);
-	phil->last_meal = get_current_time(phil->info->start_time);
+	phil->nb_meals_eaten++;
 	pthread_mutex_unlock(phil->mut);
 	ft_usleep(phil->info->time_to_eat);
 	pthread_mutex_unlock(phil->right_fork);
 	pthread_mutex_unlock(phil->left_fork);
-	phil->nb_meals_eaten++;
 }
 
 void	sleeping(t_philo *phil)

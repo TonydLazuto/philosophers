@@ -30,7 +30,6 @@
 # define SLEEPING " is sleeping\n"
 # define THINKING " is thinking\n"
 # define DIED " died\n"
-# define LEN_STATE 40
 
 typedef struct s_info
 {
@@ -44,7 +43,6 @@ typedef struct s_info
 	int				died;
 	pthread_mutex_t	*end;
 	pthread_mutex_t	*check_seats;
-	pthread_mutex_t	*starv_zone;
 	pthread_mutex_t	*status;
 }				t_info;
 
@@ -66,9 +64,9 @@ int			ft_isdigit(int c);
 int			ft_strlen(const char *s);
 char		*ft_itoa(long nb, char *s);
 void		ft_putstr(char *s);
-int			ft_strlcpy(char * dst,
-				const char * src, int dstsize);
-char		*ft_strcat(char * dst, const char * src);
+int			ft_strlcpy(char *dst,
+				const char *src, int dstsize);
+char		*ft_strcat(char *dst, const char *src);
 void		print_msg(t_philo *phil, char *state);
 
 int			check_args(int ac, char *av[]);
@@ -91,7 +89,6 @@ void		wait_for_eat(t_philo *phil);
 void		eating(t_philo *phil);
 void		sleeping(t_philo *phil);
 void		thinking(t_philo *phil);
-
-int			eat_alone(t_philo *phil);
+void		eat_alone(t_philo *phil);
 
 #endif
