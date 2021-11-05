@@ -68,6 +68,8 @@ t_philo	*init(char *av[], t_philo *phil, t_info *info)
 	info = init_info(av, info);
 	if (!info)
 		return (NULL);
+	if (check_info(info) == -1)
+		return (NULL);
 	while (i < info->nb_of_philos)
 	{
 		push_back(&phil, i + 1, info);

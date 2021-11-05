@@ -55,8 +55,8 @@ int	main(int ac, char *av[])
 	pthread_mutex_lock(phil->info->end);
 	while (phil->info->philos_seated > 0)
 		ft_usleep(0.1);
+	pthread_mutex_unlock(phil->info->end);
 	if (!clear_philos(&phil))
 		return (-1);
-	pthread_mutex_unlock(phil->info->end);
 	return (0);
 }

@@ -12,6 +12,16 @@
 
 #include "philo.h"
 
+int	check_info(t_info *info)
+{
+	if (info->nb_of_philos < 1 || info->nb_of_philos > 200)
+		return (-1);
+	if (info->time_to_die < 60 || info->time_to_eat < 60
+		|| info->time_to_sleep < 60)
+		return (-1);
+	return (0);
+}
+
 int	check_args(int ac, char *av[])
 {
 	int		i;

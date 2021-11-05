@@ -70,6 +70,7 @@ char		*ft_strcat(char *dst, const char *src);
 void		print_msg(t_philo *phil, char *state);
 
 int			check_args(int ac, char *av[]);
+int			check_info(t_info *info);
 void		push_back(t_philo **phil, int num, t_info *info);
 t_philo		*last_philo(t_philo *elet);
 int			clear_philos(t_philo **phil);
