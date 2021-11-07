@@ -14,12 +14,12 @@
 
 void	*observe(void *data)
 {
-	t_philo		*phil;
+	t_info		*info;
 
-	phil = (t_philo *)data;
-	while (!phil->info->died && phil->info->philos_seated > 0)
+	info = (t_info *)data;
+	while (!info->died && info->philos_seated > 0)
 		ft_usleep((double)0.5);
-	if (phil->info->died)
+	if (info->died)
 		return (NULL);
 	return (NULL);
 }
@@ -48,11 +48,13 @@ void	*death_routine(void *data)
 
 void	*routine(void *data)
 {
-	t_philo		*phil;
 	pthread_t	death;
+	t_philo		*phil;
 
+//	printf("up\n");
 	phil = (t_philo *)data;
 	phil->last_meal = get_current_time(phil->info->start_time);
+//	printf("phil->last_meal : %ld\n", phil->last_meal);
 	if (pthread_create(&death, NULL, &death_routine, data))
 		return (NULL);
 	if (pthread_detach(death))

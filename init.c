@@ -12,19 +12,18 @@
 
 #include "philo.h"
 
-void	link_left_fork(t_philo **phil)
+t_philo	*link_left_fork(t_philo *phil, t_info *info, int i)
 {
-	t_philo	*cpy;
-
-	cpy = *phil;
-	while (cpy)
+	if (info->nb_of_philos == 1)
 	{
-		if (!cpy->left && cpy->right)
-			cpy->left_fork = last_philo(cpy)->right_fork;
-		else
-			cpy->left_fork = cpy->left->right_fork;
-		cpy = cpy->right;
+		phil[0].left_fork = NULL;
+		return (phil);
 	}
+	if (i == 0)
+		phil[0].left_fork = phil[info->nb_of_philos - 1].right_fork;
+	else
+		phil[i].left_fork = phil[i - 1].right_fork;
+	return (phil);
 }
 
 pthread_mutex_t	*init_mutex(void)
@@ -51,39 +50,37 @@ t_info	*init_info(char *av[], t_info *info)
 		info->nb_meals_to_eat = INT_MAX;
 	info->philos_seated = info->nb_of_philos;
 	info->died = 0;
+	if (check_limits_values(info) == -1)
+		return (NULL);
+	if (pthread_mutex_init(&info->end, NULL))
+		return (NULL);
+	if (pthread_mutex_init(&info->check_seats, NULL))
+		return (NULL);
+	if (pthread_mutex_init(&info->status, NULL))
+		return (NULL);
 	return (info);
 }
 
 t_philo	*init(char *av[], t_philo *phil, t_info *info)
 {
-	int			i;
-	t_philo		*last;
+	int	i;
 
 	i = 0;
 	info = init_info(av, info);
 	if (!info)
 		return (NULL);
-	if (check_info(info) == -1)
+	phil = malloc(sizeof(t_philo) * info->nb_of_philos);
+	if (!phil)
 		return (NULL);
 	while (i < info->nb_of_philos)
 	{
-		push_back(&phil, i + 1, info);
-		last = last_philo(phil);
-		last->mut = init_mutex();
-		last->right_fork = init_mutex();
+		phil[i].num = i + 1;
+		phil[i].nb_meals_eaten = 0;
+		phil[i].mut = init_mutex(); //a voir
+		phil[i].right_fork = init_mutex();
+		link_left_fork(phil, info, i);
+		phil[i].info = info;
 		i++;
 	}
-	if (phil->info->nb_of_philos == 1)
-		phil->left_fork = NULL;
-	else
-		link_left_fork(&phil);
 	return (phil);
-}
-
-void	free_mutex(pthread_mutex_t *mut)
-{
-	if (pthread_mutex_destroy(mut))
-		return ;
-	free(mut);
-	mut = NULL;
 }

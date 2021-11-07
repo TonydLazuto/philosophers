@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "philo.h"
-
+/*
 void	eat_alone(t_philo *phil)
 {
 	pthread_t	death;
@@ -31,7 +31,7 @@ void	eat_alone(t_philo *phil)
 		ft_usleep((double)0.5);
 	pthread_mutex_unlock(phil->right_fork);
 }
-
+*/
 void	wait_for_eat(t_philo *phil)
 {
 	pthread_mutex_t		*l_fork;

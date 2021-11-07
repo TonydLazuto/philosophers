@@ -55,8 +55,6 @@ typedef struct s_philo
 	pthread_mutex_t	*left_fork;
 	long			nb_meals_eaten;
 	long			last_meal;
-	struct s_philo	*left;
-	struct s_philo	*right;
 }				t_philo;
 
 long		ft_atoi(const char *str);
@@ -70,13 +68,10 @@ char		*ft_strcat(char *dst, const char *src);
 void		print_msg(t_philo *phil, char *state);
 
 int			check_args(int ac, char *av[]);
-int			check_info(t_info *info);
-void		push_back(t_philo **phil, int num, t_info *info);
-t_philo		*last_philo(t_philo *elet);
-int			clear_philos(t_philo **phil);
-
+int			check_limits_values(t_info *info);
 t_philo		*init(char *av[], t_philo *phil, t_info *info);
 void		free_mutex(pthread_mutex_t *mut);
+int			clear_philos(t_philo **phil, t_info *info);
 
 long		get_time(void);
 void		ft_usleep(long time);
