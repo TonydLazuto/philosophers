@@ -19,8 +19,8 @@ t_philo	*link_left_fork(t_philo *phil, t_info *info, int i)
 		phil[0].left_fork = NULL;
 		return (phil);
 	}
-	if (i == 0)
-		phil[0].left_fork = phil[info->nb_of_philos - 1].right_fork;
+	if (i == 0){
+		phil[0].left_fork = phil[info->nb_of_philos - 1].right_fork;}
 	else
 		phil[i].left_fork = phil[i - 1].right_fork;
 	return (phil);
@@ -61,6 +61,16 @@ t_info	*init_info(char *av[], t_info *info)
 	return (info);
 }
 
+void	set_philo(t_philo *phil, t_info *info, int i)
+{
+	phil->info = info;
+	phil->num = i + 1;
+	phil->nb_meals_eaten = 0;
+	phil->last_meal = 0;
+	phil->mut = init_mutex(); //a voir
+	phil->right_fork = init_mutex();
+}
+
 t_philo	*init(char *av[], t_philo *phil, t_info *info)
 {
 	int	i;
@@ -74,12 +84,13 @@ t_philo	*init(char *av[], t_philo *phil, t_info *info)
 		return (NULL);
 	while (i < info->nb_of_philos)
 	{
-		phil[i].num = i + 1;
-		phil[i].nb_meals_eaten = 0;
-		phil[i].mut = init_mutex(); //a voir
-		phil[i].right_fork = init_mutex();
-		link_left_fork(phil, info, i);
-		phil[i].info = info;
+		set_philo(&phil[i], info, i);
+		i++;
+	}
+	i = 0;
+	while (i < info->nb_of_philos)
+	{
+		phil = link_left_fork(phil, info, i);
 		i++;
 	}
 	return (phil);

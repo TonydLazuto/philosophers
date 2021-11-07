@@ -14,7 +14,7 @@
 
 void	*observe(void *data)
 {
-	t_info		*info;
+	t_info	*info;
 
 	info = (t_info *)data;
 	while (!info->died && info->philos_seated > 0)
@@ -26,7 +26,7 @@ void	*observe(void *data)
 
 void	*death_routine(void *data)
 {
-	t_philo		*phil;
+	t_philo	*phil;
 
 	phil = (t_philo *)data;
 	while (!phil->info->died && phil->nb_meals_eaten
@@ -54,7 +54,6 @@ void	*routine(void *data)
 //	printf("up\n");
 	phil = (t_philo *)data;
 	phil->last_meal = get_current_time(phil->info->start_time);
-//	printf("phil->last_meal : %ld\n", phil->last_meal);
 	if (pthread_create(&death, NULL, &death_routine, data))
 		return (NULL);
 	if (pthread_detach(death))
