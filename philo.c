@@ -18,7 +18,7 @@ t_philo	*launch_threads(t_philo *phil, t_info *info)
 	int			i;
 
 	i = 0;
-	if (pthread_create(&th, NULL, &observe, (void *)info))
+	if (pthread_create(&th, NULL, &observe, (void *)&phil[0]))
 		return (NULL);
 	if (pthread_detach(th))
 		return (NULL);
@@ -46,9 +46,9 @@ int	main(int ac, char *av[])
 		return (-1);
 	if (info.nb_of_philos == 1)
 	{
-//		eat_alone(phil[0]);
-		if (!clear_philos(&phil, &info))
-			return (-1);
+		eat_alone(phil);
+		// if (!clear_philos(&phil, &info))
+			// return (-1);
 		return (0);
 	}
 	phil = launch_threads(phil, &info);
@@ -58,7 +58,5 @@ int	main(int ac, char *av[])
 	while (info.philos_seated > 0)
 		ft_usleep((double)0.1);
 	pthread_mutex_unlock(&info.end);
-	if (!clear_philos(&phil, &info))
-		return (-1);
 	return (0);
 }

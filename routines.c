@@ -14,12 +14,13 @@
 
 void	*observe(void *data)
 {
-	t_info	*info;
+	t_philo	*phil;
 
-	info = (t_info *)data;
-	while (!info->died && info->philos_seated > 0)
+	phil = (t_philo *)data;
+	while (!phil->info->died && phil->info->philos_seated > 0)
 		ft_usleep((double)0.5);
-	if (info->died)
+	printf("obs first\n");
+	if (phil->info->died)
 		return (NULL);
 	return (NULL);
 }
@@ -39,10 +40,12 @@ void	*death_routine(void *data)
 			print_msg(phil, DIED);
 			phil->info->died = 1;
 			pthread_mutex_unlock(&phil->info->status);
+			printf("death first\n");
 			return (NULL);
 		}
 		ft_usleep(1);
 	}
+	printf("life first\n");
 	return (NULL);
 }
 
@@ -69,5 +72,6 @@ void	*routine(void *data)
 	pthread_mutex_lock(&phil->info->check_seats);
 	phil->info->philos_seated--;
 	pthread_mutex_unlock(&phil->info->check_seats);
+	printf("routine first\n");
 	return (NULL);
 }
