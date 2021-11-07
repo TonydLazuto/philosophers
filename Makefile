@@ -19,7 +19,6 @@ SRCS		=	philo.c \
 				init.c \
 				routines.c \
 				actions.c \
-				clear.c \
 				time.c
 
 OBJS		=	$(addprefix $(OBJ_DIR)/,$(SRCS:.c=.o))
@@ -27,7 +26,7 @@ OBJS		=	$(addprefix $(OBJ_DIR)/,$(SRCS:.c=.o))
 all: 			$(NAME)
 
 $(NAME): 		$(OBJS)
-				$(CC) -o $(NAME) $(OBJS) -lpthread
+				$(CC) -g3 -fsanitize=thread -o $(NAME) $(OBJS) -lpthread
 
 $(OBJ_DIR)/%.o:	%.c
 				@mkdir -p $(OBJ_DIR)

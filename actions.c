@@ -22,14 +22,14 @@ void	eat_alone(t_philo *phil)
 		return ;
 	if (pthread_detach(death))
 		return ;
-	pthread_mutex_lock(phil->right_fork);
+	pthread_mutex_lock(&phil->right_fork);
 	pthread_mutex_lock(&phil->info->status);
 	print_msg(phil, TAKEFORK);
 	pthread_mutex_unlock(&phil->info->status);
 	while (!phil->info->died && phil->nb_meals_eaten
 		< phil->info->nb_meals_to_eat)
 		ft_usleep((double)0.5);
-	pthread_mutex_unlock(phil->right_fork);
+	pthread_mutex_unlock(&phil->right_fork);
 }
 
 void	wait_for_eat(t_philo *phil)
@@ -38,10 +38,10 @@ void	wait_for_eat(t_philo *phil)
 	pthread_mutex_t		*r_fork;
 
 	l_fork = phil->left_fork;
-	r_fork = phil->right_fork;
+	r_fork = &phil->right_fork;
 	if (phil->num % 2 == 0)
 	{
-		l_fork = phil->right_fork;
+		l_fork = &phil->right_fork;
 		r_fork = phil->left_fork;
 	}
 	pthread_mutex_lock(l_fork);
@@ -56,15 +56,15 @@ void	wait_for_eat(t_philo *phil)
 
 void	eating(t_philo *phil)
 {	
-	pthread_mutex_lock(phil->mut);
+	pthread_mutex_lock(&phil->mut);
 	phil->last_meal = get_current_time(phil->info->start_time);
 	pthread_mutex_lock(&phil->info->status);
 	print_msg(phil, EATING);
 	pthread_mutex_unlock(&phil->info->status);
 	phil->nb_meals_eaten++;
-	pthread_mutex_unlock(phil->mut);
+	pthread_mutex_unlock(&phil->mut);
 	ft_usleep(phil->info->time_to_eat);
-	pthread_mutex_unlock(phil->right_fork);
+	pthread_mutex_unlock(&phil->right_fork);
 	pthread_mutex_unlock(phil->left_fork);
 }
 

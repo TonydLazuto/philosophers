@@ -20,22 +20,25 @@ t_philo	*link_left_fork(t_philo *phil, t_info *info, int i)
 		return (phil);
 	}
 	if (i == 0){
-		phil[0].left_fork = phil[info->nb_of_philos - 1].right_fork;}
+		phil[0].left_fork = &phil[info->nb_of_philos - 1].right_fork;}
 	else
-		phil[i].left_fork = phil[i - 1].right_fork;
+		phil[i].left_fork = &phil[i - 1].right_fork;
 	return (phil);
 }
 
-pthread_mutex_t	*init_mutex(void)
+t_info	*init_mutexes(t_info *info)
 {
-	pthread_mutex_t	*mutex;
-
-	mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
-	if (!mutex)
+	if (pthread_mutex_init(&info->end, NULL))
 		return (NULL);
-	if (pthread_mutex_init(mutex, NULL))
+	if (pthread_mutex_init(&info->check_seats, NULL))
 		return (NULL);
-	return (mutex);
+	if (pthread_mutex_init(&info->status, NULL))
+		return (NULL);
+	if (pthread_mutex_init(&info->end_routine, NULL))
+		return (NULL);
+	if (pthread_mutex_init(&info->end_death, NULL))
+		return (NULL);
+	return (info);
 }
 
 t_info	*init_info(char *av[], t_info *info)
@@ -52,11 +55,8 @@ t_info	*init_info(char *av[], t_info *info)
 	info->died = 0;
 	if (check_limits_values(info) == -1)
 		return (NULL);
-	if (pthread_mutex_init(&info->end, NULL))
-		return (NULL);
-	if (pthread_mutex_init(&info->check_seats, NULL))
-		return (NULL);
-	if (pthread_mutex_init(&info->status, NULL))
+	info = init_mutexes(info);
+	if (!info)
 		return (NULL);
 	return (info);
 }
@@ -67,8 +67,10 @@ void	set_philo(t_philo *phil, t_info *info, int i)
 	phil->num = i + 1;
 	phil->nb_meals_eaten = 0;
 	phil->last_meal = 0;
-	phil->mut = init_mutex(); //a voir
-	phil->right_fork = init_mutex();
+	if (pthread_mutex_init(&phil->mut, NULL))
+		return ;
+	if (pthread_mutex_init(&phil->right_fork, NULL))
+		return ;
 }
 
 t_philo	*init(char *av[], t_philo *phil, t_info *info)

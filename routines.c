@@ -19,7 +19,13 @@ void	*observe(void *data)
 	phil = (t_philo *)data;
 	while (!phil->info->died && phil->info->philos_seated > 0)
 		ft_usleep((double)0.5);
-	printf("obs first\n");
+	pthread_mutex_lock(&phil->info->end_routine);
+	pthread_mutex_lock(&phil->info->end_death);
+	free(phil);
+	pthread_mutex_unlock(&phil->info->end_routine);
+	pthread_mutex_unlock(&phil->info->end_death);
+	pthread_mutex_destroy(&phil->info->end_routine);
+	pthread_mutex_destroy(&phil->info->end_death);
 	if (phil->info->died)
 		return (NULL);
 	return (NULL);
@@ -30,6 +36,7 @@ void	*death_routine(void *data)
 	t_philo	*phil;
 
 	phil = (t_philo *)data;
+
 	while (!phil->info->died && phil->nb_meals_eaten
 		< phil->info->nb_meals_to_eat)
 	{
@@ -40,12 +47,11 @@ void	*death_routine(void *data)
 			print_msg(phil, DIED);
 			phil->info->died = 1;
 			pthread_mutex_unlock(&phil->info->status);
-			printf("death first\n");
+			pthread_mutex_lock(&phil->info->end_death);
 			return (NULL);
 		}
 		ft_usleep(1);
 	}
-	printf("life first\n");
 	return (NULL);
 }
 
@@ -54,7 +60,6 @@ void	*routine(void *data)
 	pthread_t	death;
 	t_philo		*phil;
 
-//	printf("up\n");
 	phil = (t_philo *)data;
 	phil->last_meal = get_current_time(phil->info->start_time);
 	if (pthread_create(&death, NULL, &death_routine, data))
@@ -72,6 +77,6 @@ void	*routine(void *data)
 	pthread_mutex_lock(&phil->info->check_seats);
 	phil->info->philos_seated--;
 	pthread_mutex_unlock(&phil->info->check_seats);
-	printf("routine first\n");
+	pthread_mutex_unlock(&phil->info->end_routine);
 	return (NULL);
 }
