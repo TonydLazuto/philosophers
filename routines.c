@@ -37,8 +37,8 @@ void	*death_routine(void *data)
 		{
 			pthread_mutex_lock(&phil->info->status);
 			print_msg(phil, DIED);
-			phil->info->died = 1;
 			pthread_mutex_unlock(&phil->info->status);
+			phil->info->died = 1;
 			return (NULL);
 		}
 		ft_usleep(1);

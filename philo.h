@@ -72,8 +72,8 @@ int			check_limits_values(t_info *info);
 t_philo		*init(char *av[], t_philo *phil, t_info *info);
 
 long		get_time(void);
-void		ft_usleep(long time);
-long		get_current_time(long start);
+void		ft_usleep(long long time);
+long long	get_current_time(long long start);
 
 void		*death_routine(void *data);
 void		*routine(void *data);
