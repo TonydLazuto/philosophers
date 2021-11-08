@@ -56,11 +56,11 @@ void	wait_for_eat(t_philo *phil)
 
 void	eating(t_philo *phil)
 {	
-	pthread_mutex_lock(&phil->mut);
 	phil->last_meal = get_current_time(phil->info->start_time);
 	pthread_mutex_lock(&phil->info->status);
 	print_msg(phil, EATING);
 	pthread_mutex_unlock(&phil->info->status);
+	pthread_mutex_lock(&phil->mut);
 	phil->nb_meals_eaten++;
 	pthread_mutex_unlock(&phil->mut);
 	ft_usleep(phil->info->time_to_eat);

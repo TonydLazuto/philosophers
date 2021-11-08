@@ -42,8 +42,6 @@ typedef struct s_info
 	long			philos_seated;
 	int				died;
 	pthread_mutex_t	end;
-	pthread_mutex_t	end_routine;
-	pthread_mutex_t	end_death;
 	pthread_mutex_t	check_seats;
 	pthread_mutex_t	status;
 }				t_info;

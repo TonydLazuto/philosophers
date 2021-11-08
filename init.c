@@ -34,10 +34,6 @@ t_info	*init_mutexes(t_info *info)
 		return (NULL);
 	if (pthread_mutex_init(&info->status, NULL))
 		return (NULL);
-	if (pthread_mutex_init(&info->end_routine, NULL))
-		return (NULL);
-	if (pthread_mutex_init(&info->end_death, NULL))
-		return (NULL);
 	return (info);
 }
 
@@ -73,16 +69,15 @@ void	set_philo(t_philo *phil, t_info *info, int i)
 		return ;
 }
 
-t_philo	*init(char *av[], t_philo *phil, t_info *info)
+t_philo	*init(char *av[], t_philo *philos, t_info *info)
 {
-	int	i;
+	t_philo	phil[200];
+	int		i;
 
 	i = 0;
+
 	info = init_info(av, info);
 	if (!info)
-		return (NULL);
-	phil = malloc(sizeof(t_philo) * info->nb_of_philos);
-	if (!phil)
 		return (NULL);
 	while (i < info->nb_of_philos)
 	{
@@ -92,8 +87,8 @@ t_philo	*init(char *av[], t_philo *phil, t_info *info)
 	i = 0;
 	while (i < info->nb_of_philos)
 	{
-		phil = link_left_fork(phil, info, i);
+		philos = link_left_fork(phil, info, i);
 		i++;
 	}
-	return (phil);
+	return (philos);
 }

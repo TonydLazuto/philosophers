@@ -18,7 +18,6 @@ t_philo	*launch_threads(t_philo *phil, t_info *info)
 	int			i;
 
 	i = 0;
-	pthread_mutex_lock(&phil->info->end_routine);
 	if (pthread_create(&th, NULL, &observe, (void *)&phil[0]))
 		return (NULL);
 	if (pthread_detach(th))
