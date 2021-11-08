@@ -70,7 +70,6 @@ void		print_msg(t_philo *phil, char *state);
 int			check_args(int ac, char *av[]);
 int			check_limits_values(t_info *info);
 t_philo		*init(char *av[], t_philo *phil, t_info *info);
-void		free_mutex(pthread_mutex_t *mut);
 
 long		get_time(void);
 void		ft_usleep(long time);
