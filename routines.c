@@ -19,8 +19,6 @@ void	*observe(void *data)
 	phil = (t_philo *)data;
 	while (!phil->info->died && phil->info->philos_seated > 0)
 		ft_usleep((double)0.5);
-//	ft_usleep(2000);
-//	free(phil);
 	if (phil->info->died)
 		return (NULL);
 	return (NULL);
@@ -31,7 +29,6 @@ void	*death_routine(void *data)
 	t_philo	*phil;
 
 	phil = (t_philo *)data;
-
 	while (!phil->info->died && phil->nb_meals_eaten
 		< phil->info->nb_meals_to_eat)
 	{

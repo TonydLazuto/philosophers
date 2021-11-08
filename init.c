@@ -19,8 +19,8 @@ t_philo	*link_left_fork(t_philo *phil, t_info *info, int i)
 		phil[0].left_fork = NULL;
 		return (phil);
 	}
-	if (i == 0){
-		phil[0].left_fork = &phil[info->nb_of_philos - 1].right_fork;}
+	if (i == 0)
+		phil[0].left_fork = &phil[info->nb_of_philos - 1].right_fork;
 	else
 		phil[i].left_fork = &phil[i - 1].right_fork;
 	return (phil);
@@ -75,7 +75,6 @@ t_philo	*init(char *av[], t_philo *philos, t_info *info)
 	int		i;
 
 	i = 0;
-
 	info = init_info(av, info);
 	if (!info)
 		return (NULL);
