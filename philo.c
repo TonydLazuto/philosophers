@@ -48,7 +48,6 @@ int	main(int ac, char *av[])
 	if (info.nb_of_philos == 1)
 	{
 		eat_alone(phil);
-		free(phil);
 		return (0);
 	}
 	phil = launch_threads(phil, &info);
