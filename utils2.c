@@ -95,7 +95,8 @@ void	print_msg(t_philo *phil, char *state)
 	ret = ft_itoa((long)phil->num, tmp);
 	ft_strcat(buf, ret);
 	ft_strcat(buf, state);
-	if (!phil->info->died)
+	if (!phil->info->died && phil->nb_meals_eaten
+		< phil->info->nb_meals_to_eat)
 		ft_putstr(buf);
 	ret = NULL;
 }
