@@ -12,31 +12,29 @@
 
 #include "philo.h"
 
-void	link_left_fork(t_philo **phil)
+t_philo	*link_left_fork(t_philo *phil, t_info *info, int i)
 {
-	t_philo	*cpy;
-
-	cpy = *phil;
-	while (cpy)
+	if (info->nb_of_philos == 1)
 	{
-		if (!cpy->left && cpy->right)
-			cpy->left_fork = last_philo(cpy)->right_fork;
-		else
-			cpy->left_fork = cpy->left->right_fork;
-		cpy = cpy->right;
+		phil[0].left_fork = NULL;
+		return (phil);
 	}
+	if (i == 0)
+		phil[0].left_fork = &phil[info->nb_of_philos - 1].right_fork;
+	else
+		phil[i].left_fork = &phil[i - 1].right_fork;
+	return (phil);
 }
 
-pthread_mutex_t	*init_mutex(void)
+t_info	*init_mutexes(t_info *info)
 {
-	pthread_mutex_t	*mutex;
-
-	mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
-	if (!mutex)
+	if (pthread_mutex_init(&info->end, NULL))
 		return (NULL);
-	if (pthread_mutex_init(mutex, NULL))
+	if (pthread_mutex_init(&info->check_seats, NULL))
 		return (NULL);
-	return (mutex);
+	if (pthread_mutex_init(&info->status, NULL))
+		return (NULL);
+	return (info);
 }
 
 t_info	*init_info(char *av[], t_info *info)
@@ -48,42 +46,50 @@ t_info	*init_info(char *av[], t_info *info)
 	if (av[5])
 		info->nb_meals_to_eat = ft_atoi(av[5]);
 	else
-		info->nb_meals_to_eat = INT_MAX;
+		info->nb_meals_to_eat = -1;
 	info->philos_seated = info->nb_of_philos;
 	info->died = 0;
+	if (check_limits_values(info) == -1)
+		return (NULL);
+	info = init_mutexes(info);
+	if (!info)
+		return (NULL);
 	return (info);
 }
 
-t_philo	*init(char *av[], t_philo *phil, t_info *info)
+void	set_philo(t_philo *phil, t_info *info, int i)
 {
-	int			i;
-	t_philo		*last;
+	phil->info = info;
+	phil->num = i + 1;
+	phil->nb_meals_eaten = 0;
+	phil->last_meal = 0;
+	if (pthread_mutex_init(&phil->nb_lunch, NULL))
+		return ;
+	if (pthread_mutex_init(&phil->mut, NULL))
+		return ;
+	if (pthread_mutex_init(&phil->right_fork, NULL))
+		return ;
+}
+
+t_philo	*init(char *av[], t_philo *philos, t_info *info)
+{
+	t_philo	phil[250];
+	int		i;
 
 	i = 0;
 	info = init_info(av, info);
 	if (!info)
 		return (NULL);
-	if (check_info(info) == -1)
-		return (NULL);
 	while (i < info->nb_of_philos)
 	{
-		push_back(&phil, i + 1, info);
-		last = last_philo(phil);
-		last->mut = init_mutex();
-		last->right_fork = init_mutex();
+		set_philo(&phil[i], info, i);
 		i++;
 	}
-	if (phil->info->nb_of_philos == 1)
-		phil->left_fork = NULL;
-	else
-		link_left_fork(&phil);
-	return (phil);
-}
-
-void	free_mutex(pthread_mutex_t *mut)
-{
-	if (pthread_mutex_destroy(mut))
-		return ;
-	free(mut);
-	mut = NULL;
+	i = 0;
+	while (i < info->nb_of_philos)
+	{
+		philos = link_left_fork(phil, info, i);
+		i++;
+	}
+	return (philos);
 }

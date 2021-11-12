@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-int	check_info(t_info *info)
+int	check_limits_values(t_info *info)
 {
 	if (info->nb_of_philos < 1 || info->nb_of_philos > 200)
 		return (-1);

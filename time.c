@@ -23,16 +23,20 @@ long	get_time(void)
 	return (milliseconds);
 }
 
-void	ft_usleep(long time)
+void	ft_usleep(long long time)
 {
-	long	start;
+	long long	start;
 
 	start = get_time();
-	while (get_time() - start < time)
-		usleep(100);
+	while (1)
+	{
+		if (get_time() - start >= time)
+			break ;
+		usleep(200);
+	}
 }
 
-long	get_current_time(long start)
+long long	get_current_time(long long start)
 {
 	return (get_time() - start);
 }

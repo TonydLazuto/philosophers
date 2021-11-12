@@ -12,24 +12,26 @@
 
 #include "philo.h"
 
-int	launch_threads(t_philo *phil, t_info *info)
+t_philo	*launch_threads(t_philo *phil, t_info *info)
 {
 	pthread_t	th;
+	int			i;
 
-	if (pthread_create(&th, NULL, &observe, (void *)phil))
-		return (-1);
+	i = 0;
+	if (pthread_create(&th, NULL, &observe, (void *)&phil[0]))
+		return (NULL);
 	if (pthread_detach(th))
-		return (-1);
+		return (NULL);
 	info->start_time = get_time();
-	while (phil)
+	while (i < info->nb_of_philos)
 	{
-		if (pthread_create(&th, NULL, &routine, (void *)phil))
-			return (-1);
+		if (pthread_create(&th, NULL, &routine, (void *)&phil[i]))
+			return (NULL);
 		if (pthread_detach(th))
-			return (-1);
-		phil = phil->right;
+			return (NULL);
+		i++;
 	}
-	return (0);
+	return (phil);
 }
 
 int	main(int ac, char *av[])
@@ -46,17 +48,14 @@ int	main(int ac, char *av[])
 	if (info.nb_of_philos == 1)
 	{
 		eat_alone(phil);
-		if (!clear_philos(&phil))
-			return (-1);
 		return (0);
 	}
-	if (launch_threads(phil, &info) == -1)
+	phil = launch_threads(phil, &info);
+	if (!phil)
 		return (-1);
-	pthread_mutex_lock(&phil->info->end);
-	while (phil->info->philos_seated > 0)
+	pthread_mutex_lock(&info.end);
+	while (info.philos_seated > 0)
 		ft_usleep((double)0.1);
-	pthread_mutex_unlock(&phil->info->end);
-	if (!clear_philos(&phil))
-		return (-1);
+	pthread_mutex_unlock(&info.end);
 	return (0);
 }
